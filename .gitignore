@@ -27,3 +27,14 @@
 *.exe
 *.out
 *.app
+
+build*/
+external/*
+!external/CMakeLists.txt
+*.sublime-workspace
+.tags
+tags
+*.pyc
+*.swp
+*.swo
+

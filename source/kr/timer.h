@@ -16,7 +16,7 @@ class SpeedTimer
     {
         mStart = std::chrono::high_resolution_clock::now();
     };
-    void end()
+    void stop()
     {
         mEnd = std::chrono::high_resolution_clock::now();
     };

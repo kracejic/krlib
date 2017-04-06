@@ -1,5 +1,5 @@
+#include "kr/krstring.h"
 #include "catch.hpp"
-#include "kr/util/krstring.h"
 
 TEST_CASE("krstring")
 {

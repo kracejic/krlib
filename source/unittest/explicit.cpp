@@ -2,9 +2,10 @@
 #ifdef UNIT_TESTS
 #include "kr/explicit.h"
 #include "catch.hpp"
+#include <string>
 
 
-using Test1 = kr::NamedType<float, struct DistanceTag>;
+using Test1 = kr::NamedType<float, struct Test1Tag>;
 
 TEST_CASE("explicit")
 {
@@ -16,6 +17,20 @@ TEST_CASE("explicit")
     REQUIRE(z != y);
 
     REQUIRE(to_string(z) == "0.500000");
+}
+
+using Test2 = kr::NamedType<std::string, struct Test2Tag>;
+
+TEST_CASE("explicit2")
+{
+    Test2 x = Test2("ahoj");
+    Test2 y = Test2("ahoj");
+    Test2 z("test");
+
+    REQUIRE(x == y);
+    REQUIRE(z != y);
+
+    REQUIRE(to_string(z) == "x");
 }
 
 using Distance = kr::NamedNumberType<int, struct DistanceTag>;

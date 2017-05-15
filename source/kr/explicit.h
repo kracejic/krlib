@@ -3,6 +3,15 @@
 namespace kr
 {
 
+/**
+ * Usage:
+ *
+ * ```
+ * using Test1 = kr::NamedType<float, struct DistanceTag>;
+ * ```
+ *
+ * provides ==, != and to_string functions
+ */
 template <typename T, typename Tag>
 struct NamedType
 {
@@ -13,11 +22,11 @@ struct NamedType
     T v;
 
 
-    bool operator!=(const NamedType& rhs) const
+    constexpr bool operator!=(const NamedType& rhs) const
     {
         return this->v != rhs.v;
     }
-    bool operator==(const NamedType& rhs) const
+    constexpr bool operator==(const NamedType& rhs) const
     {
         return this->v == rhs.v;
     }
@@ -35,82 +44,86 @@ std::string to_string(const kr::NamedType<T, Tag>& val)
 template <typename T, typename Tag>
 struct NamedNumberType
 {
-    explicit NamedNumberType(T const& value)
+    constexpr explicit NamedNumberType(T const& value)
         : v(value){};
-    explicit NamedNumberType(T&& value)
+    constexpr explicit NamedNumberType(T&& value)
         : v(value){};
     T v;
 
 
-    bool operator!=(const NamedNumberType& rhs) const
+    constexpr bool operator!=(const NamedNumberType& rhs) const
     {
         return this->v != rhs.v;
     }
-    bool operator==(const NamedNumberType& rhs) const
+    constexpr bool operator==(const NamedNumberType& rhs) const
     {
         return this->v == rhs.v;
     }
 
 
-    NamedNumberType& operator+=(const NamedNumberType& other)
+    constexpr NamedNumberType& operator+=(const NamedNumberType& other)
     {
         this->v += other.v;
         return *this;
     }
-    NamedNumberType& operator-=(const NamedNumberType& other)
+    constexpr NamedNumberType& operator-=(const NamedNumberType& other)
     {
         this->v -= other.v;
         return *this;
     }
-    NamedNumberType& operator/=(const NamedNumberType& other)
+    constexpr NamedNumberType& operator/=(const NamedNumberType& other)
     {
         this->v /= other.v;
         return *this;
     }
-    NamedNumberType& operator*=(const NamedNumberType& other)
+    constexpr NamedNumberType& operator*=(const NamedNumberType& other)
     {
         this->v *= other.v;
         return *this;
     }
 
-    bool operator>(const NamedNumberType& other)
+    constexpr bool operator>(const NamedNumberType& other)
     {
         return this->v > other.v;
     }
-    bool operator>=(const NamedNumberType& other)
+    constexpr bool operator>=(const NamedNumberType& other)
     {
         return this->v >= other.v;
     }
-    bool operator<(const NamedNumberType& other)
+    constexpr bool operator<(const NamedNumberType& other)
     {
         return this->v < other.v;
     }
-    bool operator<=(const NamedNumberType& other)
+    constexpr bool operator<=(const NamedNumberType& other)
     {
         return this->v <= other.v;
     }
 };
 
 template <typename T, typename Tag>
-NamedNumberType<T,Tag> operator+(NamedNumberType<T,Tag> a, const NamedNumberType<T,Tag>& b)
+constexpr NamedNumberType<T, Tag> operator+(
+    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
 {
     a += b;
     return a;
 }
 template <typename T, typename Tag>
-NamedNumberType<T,Tag> operator-(NamedNumberType<T,Tag> a, const NamedNumberType<T,Tag>& b)
+constexpr NamedNumberType<T, Tag> operator-(
+    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
 {
     a -= b;
     return a;
 }
 template <typename T, typename Tag>
-NamedNumberType<T,Tag> operator/(NamedNumberType<T,Tag> a, const NamedNumberType<T,Tag>& b)
+constexpr NamedNumberType<T, Tag> operator/(
+    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
 {
     a /= b;
     return a;
 }
 template <typename T, typename Tag>
-NamedNumberType<T,Tag> operator*(NamedNumberType<T,Tag> a, const NamedNumberType<T,Tag>& b)
+constexpr NamedNumberType<T, Tag> operator*(
+    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
 {
     a *= b;
     return a;

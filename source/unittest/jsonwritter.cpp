@@ -1,4 +1,5 @@
 #include "kr/JsonWritter.h"
+#include "kr/logger.h"
 #include "catch.hpp"
 
 TEST_CASE("JsonWritter")

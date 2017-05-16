@@ -1,6 +1,18 @@
+#include "catch.hpp"
 #include "kr/JsonWritter.h"
 #include "kr/logger.h"
-#include "catch.hpp"
+
+TEST_CASE("JsonWritterTo")
+{
+    std::string t;
+    kr::JsonWritterTo js(t);
+
+    js.startObject();
+    js.put("test", "test");
+    js.endObject();
+    
+    REQUIRE(t == R"({"test":"test"})");
+}
 
 TEST_CASE("JsonWritter")
 {
@@ -21,6 +33,18 @@ TEST_CASE("JsonWritter")
 
     std::string a = js.moveText();
     REQUIRE(js.get() == "");
+
+    js.put("xxx");
+    js.put("xxx2");
+    REQUIRE(js.get() == R"("xxx","xxx2")");
+
+    js.clear();
+    REQUIRE(js.get() == "");
+    std::string x = "xxx";
+    js.put(x);
+    REQUIRE(js.get() == R"("xxx")");
+    js.put("x", x);
+    REQUIRE(js.get() == R"("xxx","x":"xxx")");
 }
 
 TEST_CASE("JsonWritter complex object")
@@ -41,8 +65,9 @@ TEST_CASE("JsonWritter complex object")
     js.endObject();
     js.endObject();
 
-    REQUIRE(js.get() == R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2"}})");
+    REQUIRE(
+        js.get() ==
+        R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2"}})");
     js.clear();
     REQUIRE(js.get() == "");
 }
-

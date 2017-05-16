@@ -5,9 +5,11 @@ namespace kr
 
 class JsonWritterTo
 {
+  protected:
+    bool firstElement = true;
+
   private:
     std::string& target;
-    bool firstElement = true;
 
     void comma()
     {
@@ -19,6 +21,24 @@ class JsonWritterTo
     JsonWritterTo() = delete;
     JsonWritterTo(std::string& target)
         : target(target){};
+    JsonWritterTo(std::string& target, size_t size)
+        : target(target)
+    {
+        target.reserve(size);
+    };
+
+    void clear()
+    {
+        target = "";
+        firstElement = true;
+    }
+
+    /// Reserves size in memory
+    void reserve(size_t size)
+    {
+        target.reserve(size);
+    };
+
 
     void startObject()
     {
@@ -78,6 +98,67 @@ class JsonWritterTo
         firstElement = false;
     };
 
+    // const char* specialization
+    void put(const std::string& name, const char* value)
+    {
+        comma();
+        target.push_back('"');
+        target.append(name);
+        target.append("\":\"");
+        target.append(value);
+        target.push_back('"');
+        firstElement = false;
+    };
+    void put(const char* value)
+    {
+        comma();
+        target.push_back('"');
+        target.append(value);
+        target.push_back('"');
+        firstElement = false;
+    };
+
+    // string specialization
+    void put(const std::string& name, const std::string& value)
+    {
+        comma();
+        target.push_back('"');
+        target.append(name);
+        target.append("\":\"");
+        target.append(value);
+        target.push_back('"');
+        firstElement = false;
+    };
+    void put(const std::string& value)
+    {
+        comma();
+        target.push_back('"');
+        target.append(value);
+        target.push_back('"');
+        firstElement = false;
+    };
+
+    // bool specialization
+    void put(const std::string& name, bool value)
+    {
+        comma();
+        target.push_back('"');
+        target.append(name);
+        if (value)
+            target.append(R"(":true)");
+        else
+            target.append(R"(":false)");
+        firstElement = false;
+    };
+    void put(bool value)
+    {
+        comma();
+        if (value)
+            target.append("true");
+        else
+            target.append("false");
+        firstElement = false;
+    };
 
     void putRaw(const std::string& name, const std::string value)
     {
@@ -95,76 +176,6 @@ class JsonWritterTo
     };
 };
 
-// const char* specialization
-template <>
-inline void JsonWritterTo::put<const char*>(
-    const std::string& name, const char* value)
-{
-    comma();
-    target.push_back('"');
-    target.append(name);
-    target.append("\":\"");
-    target.append(value);
-    target.push_back('"');
-    firstElement = false;
-};
-template <>
-void JsonWritterTo::put<const char*>(const char* value)
-{
-    comma();
-    target.push_back('"');
-    target.append(value);
-    target.push_back('"');
-    firstElement = false;
-};
-
-// string specialization
-template <>
-inline void JsonWritterTo::put<const std::string&>(
-    const std::string& name, const std::string& value)
-{
-    comma();
-    target.push_back('"');
-    target.append(name);
-    target.append("\":\"");
-    target.append(value);
-    target.push_back('"');
-    firstElement = false;
-};
-template <>
-void JsonWritterTo::put<const std::string&>(const std::string& value)
-{
-    comma();
-    target.push_back('"');
-    target.append(value);
-    target.push_back('"');
-    firstElement = false;
-};
-
-// bool specialization
-template <>
-inline void JsonWritterTo::put<bool>(
-    const std::string& name, bool value)
-{
-    comma();
-    target.push_back('"');
-    target.append(name);
-    if(value)
-        target.append( R"(":true)");
-    else
-        target.append( R"(":false)");
-    firstElement = false;
-};
-template <>
-void JsonWritterTo::put<bool>(bool value)
-{
-    comma();
-    if(value)
-        target.append( "true");
-    else
-        target.append( "false");
-    firstElement = false;
-};
 
 class JsonWritter : public JsonWritterTo
 {
@@ -175,21 +186,14 @@ class JsonWritter : public JsonWritterTo
     JsonWritter()
         : JsonWritterTo(text){};
     JsonWritter(std::string& target) = delete;
-
-    /// Reserves size in memory
-    void reserve(size_t size)
-    {
-        text.reserve(size);
-    };
+    JsonWritter(size_t size)
+        : JsonWritterTo(text, size){};
 
     /// Hands over ownership of created JSON string
     std::string&& moveText()
     {
+        firstElement = true;
         return std::move(std::move(text));
     };
-
-    void clear() {
-        text = "";
-    }
 };
 }

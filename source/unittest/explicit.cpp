@@ -30,7 +30,7 @@ TEST_CASE("explicit2")
     REQUIRE(x == y);
     REQUIRE(z != y);
 
-    REQUIRE(to_string(z) == "x");
+    REQUIRE(to_string(z) == "test");
 }
 
 using Distance = kr::NamedNumberType<int, struct DistanceTag>;

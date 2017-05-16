@@ -19,6 +19,15 @@ struct NamedType
         : v(value){};
     explicit NamedType(T&& value)
         : v(value){};
+
+    template<typename T_ = T>
+    explicit NamedType(T&& value,
+        typename std::enable_if<!std::is_reference<T_>{},
+            std::nullptr_t>::type = nullptr)
+        : v(std::move(value))
+    {
+    }
+
     T v;
 
 
@@ -36,6 +45,18 @@ template <typename T, typename Tag>
 std::string to_string(const kr::NamedType<T, Tag>& val)
 {
     return std::to_string(val.v);
+}
+
+template <typename Tag>
+std::string to_string(const kr::NamedType<std::string&, Tag>& val)
+{
+    return val.v;
+}
+
+template <typename Tag>
+std::string to_string(const kr::NamedType<std::string, Tag>& val)
+{
+    return val.v;
 }
 
 //-----------------------------------------------------------------------------

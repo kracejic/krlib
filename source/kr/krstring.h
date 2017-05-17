@@ -72,4 +72,17 @@ std::string itostr(T o)
     return std::string(f, (str + 12) - f);
 }
 
+std::string human_readable(int64_t size)
+{
+    if(size < 1024L*10)
+        return itostr(size);
+    if(size < 1024L*1024L*10)
+        return itostr(size/1024L)+"k";
+    if(size < 1024L*1024L*1024L*10L)
+        return itostr(size/1024L/1024L)+"M";
+    if(size < 1024L*1024L*1024L*1024L*10L)
+        return itostr(size/1024L/1024L/1024L)+"G";
+    return itostr(size/1024L/1024L/1024L/1024L)+"T";
+}
+
 } /* kr */

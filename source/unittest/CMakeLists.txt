@@ -9,6 +9,7 @@ set(SRCTEST
     krstring.cpp
     jsonwritter.cpp
     explicit.cpp
+    optional.cpp
     )
 
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})

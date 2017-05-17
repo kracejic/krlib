@@ -19,10 +19,10 @@ namespace _detail
         constexpr storage_t(T&& other)
             : val(other){};
 
-        // template <class... Args>
-        // constexpr storage_t(Args&&... args)
-        //     : val((args)...){};
-        //
+        template <class... Args>
+        constexpr storage_t(Args&&... args)
+            : val((args)...){};
+
         ~storage_t() {};
     };
 
@@ -57,10 +57,11 @@ class optional
             if(other.initialized)
                 storage.val = other.storage.val;
         };
-    // template <class... Args>
-    // constexpr optional(Args&&... args)
-    //     : storage((args)...)
-    //     , initialized(true){};
+
+    template <class... Args>
+    optional(Args&&... args)
+        : storage((args)...)
+        , initialized(true){};
 
 
 

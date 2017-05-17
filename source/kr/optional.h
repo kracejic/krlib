@@ -23,7 +23,7 @@ namespace _detail
         constexpr storage_t(Args&&... args)
             : val((args)...){};
 
-        ~storage_t() {};
+        ~storage_t(){};
     };
 
 } /* _detail */
@@ -48,21 +48,28 @@ class optional
         , initialized(true){};
 
     optional(optional<T>& other)
-        : initialized(other.initialized){
-            if(other.initialized)
-                storage.val = other.storage.val;
-        };
+        : initialized(other.initialized)
+    {
+        if (other.initialized)
+            storage.val = other.storage.val;
+    };
     optional(optional<T>&& other)
-        : initialized(other.initialized){
-            if(other.initialized)
-                storage.val = other.storage.val;
-        };
+        : initialized(other.initialized)
+    {
+        if (other.initialized)
+            storage.val = other.storage.val;
+    };
 
     template <class... Args>
     optional(Args&&... args)
         : storage((args)...)
         , initialized(true){};
 
+    ~optional()
+    {
+        if (initialized)
+            storage.val.T::~T();
+    }
 
 
     constexpr explicit operator bool()

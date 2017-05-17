@@ -57,7 +57,7 @@ struct Vec
 kr::optional<Vec> fun2(bool x)
 {
     if (x)
-        return {1,3};
+        return {1, 3};
     else
         return {};
 }
@@ -66,12 +66,12 @@ TEST_CASE("")
 {
     Vec x(1, 2);
     kr::optional<Vec> empty;
-    kr::optional<Vec> val{1,2};
+    kr::optional<Vec> val{1, 2};
 
     REQUIRE(!empty);
     REQUIRE(!!val);
     REQUIRE(*val == x);
-    REQUIRE(empty.value_or({1,2}) == x);
+    REQUIRE(empty.value_or({1, 2}) == x);
     REQUIRE(val->x == 1);
     REQUIRE(val->y == 2);
 
@@ -80,6 +80,22 @@ TEST_CASE("")
     auto val3 = fun2(true);
     REQUIRE(!!val3);
     REQUIRE(!!fun2(true));
+}
+
+#include "kr/canaryobject.h"
+kr::CanaryObject::State kr::CanaryObject::state;
+
+TEST_CASE("CanaryObject")
+{
+    kr::CanaryObject::state = kr::CanaryObject::State::undef;
+    kr::optional<kr::CanaryObject> val;
+    REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::undef);
+
+    {
+        kr::optional<kr::CanaryObject> val1(2);
+        REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::construct2);
+    }
+    REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::destruct);
 }
 
 #endif

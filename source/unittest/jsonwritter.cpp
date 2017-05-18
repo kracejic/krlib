@@ -10,7 +10,7 @@ TEST_CASE("JsonWritterTo")
     js.startObject();
     js.put("test", "test");
     js.endObject();
-    
+
     REQUIRE(t == R"({"test":"test"})");
 }
 
@@ -70,4 +70,14 @@ TEST_CASE("JsonWritter complex object")
         R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2"}})");
     js.clear();
     REQUIRE(js.get() == "");
+}
+
+
+TEST_CASE("JsonWritter escaping")
+{
+    REQUIRE(kr::JsonWritter::escape("\ntest\"") == R"(\ntest\")");
+    REQUIRE(kr::JsonWritter::escape("\"\"\"\"") == R"(\"\"\"\")");
+    REQUIRE(kr::JsonWritter::escape("\\") == R"(\\)");
+    REQUIRE(kr::JsonWritter::escape("\\a") == R"(\\a)");
+    REQUIRE(kr::JsonWritter::escape("\"\"\\\"\"") == R"(\"\"\\\"\")");
 }

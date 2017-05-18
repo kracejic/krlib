@@ -195,5 +195,26 @@ class JsonWritter : public JsonWritterTo
         firstElement = true;
         return std::move(std::move(text));
     };
+
+    static inline std::string escape(const std::string& in)
+    {
+        std::string target = "";
+        target.reserve(in.size());
+        for (auto ch = in.cbegin(); ch != in.cend(); ++ch)
+        {
+            switch (*ch)
+            {
+                case '"': target.append("\\\""); break;
+                case '\b': target.append("\\b"); break;
+                case '\n': target.append("\\n"); break;
+                case '\f': target.append("\\f"); break;
+                case '\r': target.append("\\r"); break;
+                case '\t': target.append("\\t"); break;
+                case '\\': target.append("\\\\"); break;
+                default: target.push_back(*ch); break;
+            }
+        }
+        return target;
+    }
 };
 }

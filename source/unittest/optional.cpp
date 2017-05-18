@@ -75,6 +75,11 @@ TEST_CASE("")
     REQUIRE(val->x == 1);
     REQUIRE(val->y == 2);
 
+    if(!val)
+        FAIL();
+    if(empty)
+        FAIL();
+
     auto val2 = fun2(false);
     REQUIRE(!val2);
     auto val3 = fun2(true);
@@ -88,7 +93,11 @@ kr::CanaryObject::State kr::CanaryObject::state;
 TEST_CASE("CanaryObject")
 {
     kr::CanaryObject::state = kr::CanaryObject::State::undef;
-    kr::optional<kr::CanaryObject> val;
+    {
+        kr::optional<kr::CanaryObject> val;
+        REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::undef);
+    }
+    // check it was not deconstructed
     REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::undef);
 
     {

@@ -9,12 +9,12 @@ include(CTest)
 add_custom_target(check
     COMMAND echo [----] Running tests
     COMMAND ${CMAKE_CTEST_COMMAND}  --output-on-failure -C Debug
-    DEPENDS exampleApp unittests)
+    DEPENDS unittests)
 
 add_custom_target(checkVerbose
     COMMAND echo [----] Running tests
     COMMAND ${CMAKE_CTEST_COMMAND}  -V --output-on-failure -C Debug
-    DEPENDS exampleApp unittests)
+    DEPENDS unittests)
 
 #------------------------------------------------------------------------------
 # CTest test suite

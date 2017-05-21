@@ -5,7 +5,7 @@
 TEST_CASE("JsonWritterTo")
 {
     std::string t;
-    kr::JsonWritterTo js(t);
+    kr::Json::WritterTo js(t);
 
     js.startObject();
     js.put("test", "test");
@@ -16,8 +16,7 @@ TEST_CASE("JsonWritterTo")
 
 TEST_CASE("JsonWritter")
 {
-    // REQUIRE(kr::itostr(255) == "255");
-    kr::JsonWritter js;
+    kr::Json::Writter js;
     js.startArray();
     js.endArray();
     REQUIRE(js.get() == "[]");
@@ -49,7 +48,7 @@ TEST_CASE("JsonWritter")
 
 TEST_CASE("JsonWritter complex object")
 {
-    kr::JsonWritter js;
+    kr::Json::Writter js;
     js.startObject();
     js.startObject("data");
     js.startArray("array");
@@ -75,9 +74,9 @@ TEST_CASE("JsonWritter complex object")
 
 TEST_CASE("JsonWritter escaping")
 {
-    REQUIRE(kr::JsonWritter::escape("\ntest\"") == R"(\ntest\")");
-    REQUIRE(kr::JsonWritter::escape("\"\"\"\"") == R"(\"\"\"\")");
-    REQUIRE(kr::JsonWritter::escape("\\") == R"(\\)");
-    REQUIRE(kr::JsonWritter::escape("\\a") == R"(\\a)");
-    REQUIRE(kr::JsonWritter::escape("\"\"\\\"\"") == R"(\"\"\\\"\")");
+    REQUIRE(kr::Json::escape("\ntest\"") == R"(\ntest\")");
+    REQUIRE(kr::Json::escape("\"\"\"\"") == R"(\"\"\"\")");
+    REQUIRE(kr::Json::escape("\\") == R"(\\)");
+    REQUIRE(kr::Json::escape("\\a") == R"(\\a)");
+    REQUIRE(kr::Json::escape("\"\"\\\"\"") == R"(\"\"\\\"\")");
 }

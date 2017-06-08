@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 
 namespace kr
@@ -74,15 +75,36 @@ std::string itostr(T o)
 
 std::string human_readable(int64_t size)
 {
-    if(size < 1024L*10)
+    if (size < 1024L * 10L)
         return itostr(size);
-    if(size < 1024L*1024L*10)
-        return itostr(size/1024L)+"k";
-    if(size < 1024L*1024L*1024L*10L)
-        return itostr(size/1024L/1024L)+"M";
-    if(size < 1024L*1024L*1024L*1024L*10L)
-        return itostr(size/1024L/1024L/1024L)+"G";
-    return itostr(size/1024L/1024L/1024L/1024L)+"T";
+    if (size < 1024L * 1024L * 10L)
+        return itostr(size / 1024L) + "k";
+    if (size < 1024L * 1024L * 1024L * 10L)
+        return itostr(size / 1024L / 1024L) + "M";
+    if (size < 1024L * 1024L * 1024L * 1024L * 10L)
+        return itostr(size / 1024L / 1024L / 1024L) + "G";
+    return itostr(size / 1024L / 1024L / 1024L / 1024L) + "T";
 }
+
+/**
+ * @return true if text starts with substring
+ */
+bool starts_with(const std::string& text, const std::string& substring)
+{
+    if (substring.size() > text.size())
+        return false;
+    return std::equal(substring.begin(), substring.end(), text.begin());
+};
+
+/**
+ * @return true if text ends with substring
+ */
+bool ends_with(const std::string& text, const std::string& substring)
+{
+    if (substring.size() > text.size())
+        return false;
+    return std::equal(substring.rbegin(), substring.rend(), text.rbegin());
+};
+
 
 } /* kr */

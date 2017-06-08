@@ -75,9 +75,9 @@ TEST_CASE("")
     REQUIRE(val->x == 1);
     REQUIRE(val->y == 2);
 
-    if(!val)
+    if (!val)
         FAIL();
-    if(empty)
+    if (empty)
         FAIL();
 
     auto val2 = fun2(false);

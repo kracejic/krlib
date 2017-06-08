@@ -20,10 +20,10 @@ struct NamedType
     explicit NamedType(T&& value)
         : v(value){};
 
-    template<typename T_ = T>
-    explicit NamedType(T&& value,
-        typename std::enable_if<!std::is_reference<T_>{},
-            std::nullptr_t>::type = nullptr)
+    template <typename T_ = T>
+    explicit NamedType(
+        T&& value, typename std::enable_if<!std::is_reference<T_>{},
+                       std::nullptr_t>::type = nullptr)
         : v(std::move(value))
     {
     }

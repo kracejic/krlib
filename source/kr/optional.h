@@ -10,8 +10,7 @@ namespace _detail
         unsigned char dummy_;
         T val;
 
-        constexpr storage_t() noexcept
-            : dummy_(){};
+        constexpr storage_t() noexcept : dummy_(){};
 
         constexpr storage_t(T& other)
             : val(other){};
@@ -91,7 +90,7 @@ class optional
     {
         return &storage.val;
     };
-    constexpr const T& operator*() const &
+    constexpr const T& operator*() const&
     {
         return storage.val;
     };
@@ -99,7 +98,7 @@ class optional
     {
         return storage.val;
     };
-    constexpr const T&& operator*() const &&
+    constexpr const T&& operator*() const&&
     {
         return storage.val;
     };

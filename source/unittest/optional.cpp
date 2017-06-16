@@ -45,9 +45,9 @@ TEST_CASE("optional from function")
 struct Vec
 {
     int x, y;
-    Vec(int x, int y)
-        : x(x)
-        , y(y){};
+    Vec(int _x, int _y)
+        : x(_x)
+        , y(_y){};
     bool operator==(Vec& other)
     {
         return x == other.x && y == other.y;

@@ -1,4 +1,10 @@
 
+# Flags
+if(NOT MSVC)
+    add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic)
+    #-Wmisleading-indentation 
+endif()
+
 add_subdirectory(unittest)
 
 

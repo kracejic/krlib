@@ -20,7 +20,7 @@ namespace _detail
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
-            : val((args)...){};
+            : val((args)...){}
 
         ~storage_t(){};
     };
@@ -62,7 +62,7 @@ class optional
     template <class... Args>
     optional(Args&&... args)
         : storage((args)...)
-        , initialized(true){};
+        , initialized(true){}
 
     ~optional()
     {

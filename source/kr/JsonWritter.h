@@ -25,10 +25,10 @@ namespace Json
           public:
             BaseWritter(){};
 
-            BaseWritter(std::string& target)
-                : target(target){};
-            BaseWritter(std::string& target, size_t size)
-                : target(target)
+            BaseWritter(std::string& _target)
+                : target(_target){};
+            BaseWritter(std::string& _target, size_t size)
+                : target(_target)
             {
                 this->target.reserve(size);
             };
@@ -101,14 +101,14 @@ namespace Json
                 target.append("\":");
                 target.append(std::to_string(value));
                 firstElement = false;
-            };
+            }
             template <class T>
             void put(const T value)
             {
                 comma();
                 target.append(std::to_string(value));
                 firstElement = false;
-            };
+            }
 
             // const char* specialization
             void put(const std::string& name, const char* value)
@@ -120,7 +120,7 @@ namespace Json
                 target.append(value);
                 target.push_back('"');
                 firstElement = false;
-            };
+            }
             void put(const char* value)
             {
                 comma();
@@ -128,7 +128,7 @@ namespace Json
                 target.append(value);
                 target.push_back('"');
                 firstElement = false;
-            };
+            }
 
             // string specialization
             void put(const std::string& name, const std::string& value)
@@ -140,7 +140,7 @@ namespace Json
                 target.append(value);
                 target.push_back('"');
                 firstElement = false;
-            };
+            }
             void put(const std::string& value)
             {
                 comma();
@@ -148,7 +148,7 @@ namespace Json
                 target.append(value);
                 target.push_back('"');
                 firstElement = false;
-            };
+            }
 
             // bool specialization
             void put(const std::string& name, bool value)
@@ -161,7 +161,7 @@ namespace Json
                 else
                     target.append(R"(":false)");
                 firstElement = false;
-            };
+            }
             void put(bool value)
             {
                 comma();
@@ -170,7 +170,7 @@ namespace Json
                 else
                     target.append("false");
                 firstElement = false;
-            };
+            }
 
             void putRaw(const std::string& name, const std::string value)
             {
@@ -180,12 +180,12 @@ namespace Json
                 target.append("\":");
                 target.append(value);
                 firstElement = false;
-            };
+            }
 
             const std::string& get() const
             {
                 return target;
-            };
+            }
         };
     }
 
@@ -194,10 +194,10 @@ namespace Json
     class WritterTo : public _detail::BaseWritter<std::string&>
     {
       public:
-        WritterTo(std::string& target)
-            : BaseWritter(target){};
-        WritterTo(std::string& target, size_t size)
-            : BaseWritter(target)
+        WritterTo(std::string& _target)
+            : BaseWritter(_target){};
+        WritterTo(std::string& _target, size_t size)
+            : BaseWritter(_target)
         {
             this->target.reserve(size);
         };
@@ -223,5 +223,5 @@ namespace Json
         }
         return target;
     }
-};
+}
 }

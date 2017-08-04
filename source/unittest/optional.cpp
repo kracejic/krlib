@@ -88,23 +88,21 @@ TEST_CASE("")
 }
 
 #include "kr/canaryobject.h"
-kr::CanaryObject::State kr::CanaryObject::state;
-
 TEST_CASE("CanaryObject")
 {
-    kr::CanaryObject::state = kr::CanaryObject::State::undef;
+    kr::CanaryObject::initStates();
     {
         kr::optional<kr::CanaryObject> val;
-        REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::undef);
+        REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::undef);
     }
     // check it was not deconstructed
-    REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::undef);
+    REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::undef);
 
     {
         kr::optional<kr::CanaryObject> val1(2);
-        REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::construct2);
+        REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::construct2);
     }
-    REQUIRE(kr::CanaryObject::state == kr::CanaryObject::State::destruct);
+    REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::destruct);
 }
 
 #endif

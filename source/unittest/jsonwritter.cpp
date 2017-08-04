@@ -61,12 +61,13 @@ TEST_CASE("JsonWritter complex object")
     js.endArray();
     js.put("obj", true);
     js.put("val", "val2");
+    js.put("val", nullptr);
     js.endObject();
     js.endObject();
 
     REQUIRE(
         js.get() ==
-        R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2"}})");
+        R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2","val":null}})");
     js.clear();
     REQUIRE(js.get() == "");
 }

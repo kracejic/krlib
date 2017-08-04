@@ -144,10 +144,12 @@ std::vector<std::string> split(const std::string& text,
     const std::string& delimiters = "\t\n ", int maxSplits = 0)
 {
     std::vector<std::string> result;
-    result.reserve(maxSplits ? maxSplits + 1 : 10); // quess
+    result.reserve(
+        maxSplits ? maxSplits + 1 : 10); // 10 is guessed capacity for most cases
     int numSplits = 0;
-    size_t start = 0, pos;
 
+    size_t start, pos;
+    start = 0;
     do
     {
         pos = text.find_first_of(delimiters, start);
@@ -161,7 +163,7 @@ std::vector<std::string> split(const std::string& text,
         {
             // Copy the rest of the string
             result.emplace_back(text.substr(start));
-            return result;
+            break;
         }
         else
         {
@@ -172,6 +174,7 @@ std::vector<std::string> split(const std::string& text,
         // parse up to next real data
         start = text.find_first_not_of(delimiters, start);
         ++numSplits;
+
     } while (pos != std::string::npos);
 
     return result;

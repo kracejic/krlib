@@ -3,7 +3,7 @@
 
 namespace kr
 {
-namespace _detail
+namespace _optional_detail
 {
     template <class T>
     union storage_t {
@@ -25,12 +25,12 @@ namespace _detail
         ~storage_t(){};
     };
 
-} /* _detail */
+} /* _optional_detail */
 template <typename T>
 class optional
 {
   private:
-    _detail::storage_t<T> storage;
+    _optional_detail::storage_t<T> storage;
     bool initialized;
 
 
@@ -58,6 +58,7 @@ class optional
         if (other.initialized)
             storage.val = other.storage.val;
     };
+    // TODO support copy/move assigment (even with replacing)
 
     template <class... Args>
     optional(Args&&... args)

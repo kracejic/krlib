@@ -49,7 +49,7 @@ namespace Json
             std::string&& moveText()
             {
                 firstElement = true;
-                return std::move(std::move(target));
+                return std::move(target);
             };
 
             void startObject()
@@ -150,6 +150,24 @@ namespace Json
                 firstElement = false;
             }
 
+            // nullptr specialization
+            void put(const std::string& name, const std::nullptr_t value)
+            {
+                (void)value;
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":null");
+                firstElement = false;
+            }
+            void put(const std::nullptr_t value)
+            {
+                (void)value;
+                comma();
+                target.append("null");
+                firstElement = false;
+            }
+
             // bool specialization
             void put(const std::string& name, bool value)
             {
@@ -172,7 +190,7 @@ namespace Json
                 firstElement = false;
             }
 
-            void putRaw(const std::string& name, const std::string value)
+            void putRaw(const std::string& name, const std::string& value)
             {
                 comma();
                 target.push_back('"');

@@ -11,6 +11,7 @@ set(SRCTEST
     explicit.cpp
     optional.cpp
     inlineVec.cpp
+    jsonReader.cpp
     )
 
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})

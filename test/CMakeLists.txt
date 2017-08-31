@@ -46,3 +46,11 @@ add_test(NAME "catch_unit_tests"
     COMMAND $<TARGET_FILE:unittests>
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+# convenience run gdb target
+find_program(GDB_PATH gdb)
+if(GDB_PATH)
+    add_custom_target(gdb
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${GDB_PATH} $<TARGET_FILE:unittests>
+        DEPENDS unittests)
+endif()

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
 
 namespace kr
 {
@@ -13,9 +12,8 @@ namespace Json
 {
     namespace _detail
     {
-        enum class Type
+        enum class Type : int8_t
         {
-            NA,
             object,
             array,
             string,
@@ -37,11 +35,10 @@ namespace Json
                 , text_start(start)
                 , text_end(end){};
             Type type{Type::null};
+            uint32_t size{1};
             // indexes ins
             char* text_start{0};
             char* text_end{0};
-
-            int size{1};
         };
 
         class Json
@@ -76,10 +73,35 @@ namespace Json
                 return isNull();
             }
 
-            Json operator[](size_t index)
+            Json operator[](const char* key)
+            {
+                for (auto& keyval : *this)
+                    if (keyval.key() == key)
+                        return keyval.value();
+                // TODO throw
+                return {};
+            }
+
+            template <class T>
+            T get_or(const char* key, T def_value)
+            {
+                for (auto& keyval : *this)
+                    if (keyval.key() == key)
+                        return (T)keyval.value();
+                return def_value;
+            }
+            std::string get_or(const char* key, const char* def_value)
+            {
+                for (auto& keyval : *this)
+                    if (keyval.key() == key)
+                        return keyval.value().str();
+                return def_value;
+            }
+
+            Json operator[](int index)
             {
                 Json ret = this->begin();
-                for (size_t i = 0; i < index; ++i)
+                for (int i = 0; i < index; ++i)
                     ++ret;
                 return ret;
             }
@@ -95,6 +117,17 @@ namespace Json
                 return count;
             }
 
+            std::string key()
+            {
+                Json key = me + 1;
+                return key.str();
+            }
+            Json value()
+            {
+                Json val = me + 2;
+                return val;
+            }
+
             Json begin()
             {
                 return {me + 1};
@@ -107,8 +140,6 @@ namespace Json
             {
                 return {me->text_start, me->text_end};
             }
-
-
 
             // clang-format off
             operator std::string() { return {me->text_start, me->text_end}; }
@@ -143,13 +174,9 @@ namespace Json
         };
     }
 
-    class Array : public _detail::Json
-    {
-    };
-    class Object : public _detail::Json
-    {
-    };
-
+    /**
+     * Has ~2x memory overhead (plus string), but is fast. 
+     */
     class Reader : public _detail::Json
     {
       private:
@@ -160,7 +187,6 @@ namespace Json
         void _parse()
         {
             std::vector<size_t> st;
-            st.emplace_back(0);
 
             for (size_t i = 0; i < text.size(); ++i)
             {
@@ -169,12 +195,16 @@ namespace Json
                 switch (ch)
                 {
                     case '"':
-                        std::cout << "TEXT\n";
+                        if (!st.empty() &&
+                            tree[st.back()].type == _detail::Type::object)
+                        {
+                            st.emplace_back(tree.size());
+                            tree.emplace_back(_detail::Type::keyval, &text[i]);
+                        }
                         tree.emplace_back(_detail::Type::string, &text[i + 1]);
                         do
                         {
                             ++i;
-                            std::cout << " text[i] = " << text[i] << "\n";
                         } while (text[i] != '"');
                         tree.back().text_end = &text[i];
                         break;
@@ -192,12 +222,10 @@ namespace Json
                     case '-':
                     case '+':
                     case '.':
-                        std::cout << "NUMBER\n";
                         tree.emplace_back(_detail::Type::number, &text[i]);
                         do
                         {
                             ++i;
-                            std::cout << " text[i] = " << text[i] << "\n";
                         } while (std::isdigit(text[i]) || text[i] == '.');
                         tree.back().text_end = &text[i];
                         --i;
@@ -208,7 +236,6 @@ namespace Json
                         if (text[i + 1] == 'a' && text[i + 2] == 'l' &&
                             text[i + 3] == 's' && text[i + 4] == 'e')
                         {
-                            std::cout << "FALSE\n";
                             tree.emplace_back(
                                 _detail::Type::false_, &text[i], &text[i + 5]);
                             i += 4;
@@ -219,7 +246,6 @@ namespace Json
                         if (text[i + 1] == 'r' && text[i + 2] == 'u' &&
                             text[i + 3] == 'e')
                         {
-                            std::cout << "TRUE\n";
                             tree.emplace_back(
                                 _detail::Type::true_, &text[i], &text[i + 4]);
                             i += 3;
@@ -229,7 +255,6 @@ namespace Json
                         if (text[i + 1] == 'u' && text[i + 2] == 'l' &&
                             text[i + 3] == 'l')
                         {
-                            std::cout << "NULL\n";
                             tree.emplace_back(
                                 _detail::Type::null, &text[i], &text[i + 4]);
                             i += 3;
@@ -237,25 +262,38 @@ namespace Json
                         break;
 
                     case '[':
-                        std::cout << "ARRAY\n";
                         st.emplace_back(tree.size());
                         tree.emplace_back(_detail::Type::array, &text[i]);
                         break;
                     case ']':
-                        std::cout << "st.back() = " << st.back() << "\n";
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
                         st.pop_back();
                         break;
                     case '{':
-                        std::cout << "OBJECT\n";
                         st.emplace_back(tree.size());
                         tree.emplace_back(_detail::Type::object, &text[i]);
                         break;
                     case '}':
+                        if (!st.empty() &&
+                            tree[st.back()].type == _detail::Type::keyval)
+                        {
+                            tree[st.back()].text_end = &text[i];
+                            tree[st.back()].size = tree.size() - st.back();
+                            st.pop_back();
+                        }
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
                         st.pop_back();
+                        break;
+                    case ',':
+                        if (!st.empty() &&
+                            tree[st.back()].type == _detail::Type::keyval)
+                        {
+                            tree[st.back()].text_end = &text[i];
+                            tree[st.back()].size = tree.size() - st.back();
+                            st.pop_back();
+                        }
                         break;
                     default: break;
                 }
@@ -264,6 +302,7 @@ namespace Json
         }
 
       public:
+        Reader(){};
         Reader(std::string&& input)
             : text(input)
         {
@@ -274,12 +313,12 @@ namespace Json
         {
             _parse();
         }
-        // TODO more
 
         void parse(std::string&& input)
         {
             tree.clear();
             text = input;
+            _parse();
         }
     };
 }

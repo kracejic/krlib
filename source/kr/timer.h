@@ -23,10 +23,11 @@ class SpeedTimer
     std::string str()
     {
         return std::to_string(
-                   std::chrono::duration_cast<std::chrono::duration<double>>(
+                   std::chrono::duration_cast<
+                       std::chrono::duration<double, std::ratio<1, 1000>>>(
                        mEnd - mStart)
                        .count()) +
-               "s";
+               "ms";
     };
     double getSec()
     {
@@ -34,6 +35,20 @@ class SpeedTimer
                    mEnd - mStart)
             .count();
     };
+    double getMSec()
+    {
+        return std::chrono::duration_cast<
+                   std::chrono::duration<double, std::ratio<1, 1000>>>(
+                   mEnd - mStart)
+            .count();
+    };
+    std::string stop_print_restart()
+    {
+        stop();
+        auto ret = str();
+        start();
+        return ret;
+    }
 };
 
 } /* kr */

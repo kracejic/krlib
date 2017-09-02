@@ -40,144 +40,208 @@ namespace Json
             char* text_start{0};
             char* text_end{0};
         };
-
-        class Json
-        {
-          public:
-            TreeNode* me{nullptr};
-            Json(){};
-            Json(TreeNode* _it)
-                : me(_it){};
-            Json& operator++()
-            {
-                me = me + me->size;
-                return *this;
-            }
-            Json& operator*()
-            {
-                return *this;
-            }
-            bool operator!=(const Json& rhs)
-            {
-                return me != rhs.me;
-            }
-
-            bool operator!=(std::nullptr_t p)
-            {
-                (void)p;
-                return not isNull();
-            }
-            bool operator==(std::nullptr_t p)
-            {
-                (void)p;
-                return isNull();
-            }
-
-            Json operator[](const char* key)
-            {
-                for (auto& keyval : *this)
-                    if (keyval.key() == key)
-                        return keyval.value();
-                // TODO throw
-                return {};
-            }
-
-            template <class T>
-            T get_or(const char* key, T def_value)
-            {
-                for (auto& keyval : *this)
-                    if (keyval.key() == key)
-                        return (T)keyval.value();
-                return def_value;
-            }
-            std::string get_or(const char* key, const char* def_value)
-            {
-                for (auto& keyval : *this)
-                    if (keyval.key() == key)
-                        return keyval.value().str();
-                return def_value;
-            }
-
-            Json operator[](int index)
-            {
-                Json ret = this->begin();
-                for (int i = 0; i < index; ++i)
-                    ++ret;
-                return ret;
-            }
-            size_t size()
-            {
-                Json ret = this->begin();
-                size_t count = 0;
-                while (ret != this->end())
-                {
-                    ++count;
-                    ++ret;
-                }
-                return count;
-            }
-
-            std::string key()
-            {
-                Json key = me + 1;
-                return key.str();
-            }
-            Json value()
-            {
-                Json val = me + 2;
-                return val;
-            }
-
-            Json begin()
-            {
-                return {me + 1};
-            }
-            Json end()
-            {
-                return {me + me->size};
-            }
-            std::string str()
-            {
-                return {me->text_start, me->text_end};
-            }
-
-            // clang-format off
-            operator std::string() { return {me->text_start, me->text_end}; }
-            operator bool() { return me->type == _detail::Type::true_; }
-            operator int() { return strtol(me->text_start, nullptr, 10); }
-            operator long() { return strtol(me->text_start, nullptr, 10); }
-            operator float() { return strtof(me->text_start, nullptr); }
-            operator double() { return strtod(me->text_start, nullptr); }
-
-            bool operator==(const std::string& rhs) { return operator std::string() == rhs; }
-            bool operator==(const char* rhs) { return operator std::string() == rhs; }
-            bool operator==(long rhs) { return operator long() == rhs; }
-            bool operator==(int rhs) { return operator int() == rhs; }
-            bool operator==(float rhs) { return operator float() == rhs; }
-            bool operator==(double rhs) { return operator double() == rhs; }
-            bool operator==(bool rhs) { return operator bool() == rhs; }
-
-            bool operator!=(const std::string& rhs) { return operator std::string() != rhs; }
-            bool operator!=(const char* rhs) { return operator std::string() != rhs; }
-            bool operator!=(long rhs) { return operator long() != rhs; }
-            bool operator!=(int rhs) { return operator int() != rhs; }
-            bool operator!=(float rhs) { return operator float() != rhs; }
-            bool operator!=(double rhs) { return operator double() != rhs; }
-            bool operator!=(bool rhs) { return operator bool() != rhs; }
-
-            bool isNull() { return me->type == _detail::Type::null; };
-            bool isNumber() { return me->type == _detail::Type::number; };
-            bool isString() { return me->type == _detail::Type::string; };
-            bool isObject() { return me->type == _detail::Type::object; };
-            bool isArray() { return me->type == _detail::Type::array; };
-            // clang-format on
-        };
     }
 
+    class Value
+    {
+      public:
+        _detail::TreeNode* me{nullptr};
+        Value(){};
+        Value(_detail::TreeNode* _it)
+            : me(_it){};
+        Value& operator++()
+        {
+            me = me + me->size;
+            return *this;
+        }
+        Value& operator*()
+        {
+            return *this;
+        }
+        bool operator!=(const Value& rhs)
+        {
+            return me != rhs.me;
+        }
+
+        bool operator!=(std::nullptr_t p)
+        {
+            (void)p;
+            return not isNull();
+        }
+        bool operator==(std::nullptr_t p)
+        {
+            (void)p;
+            return isNull();
+        }
+
+        Value operator[](const char* key)
+        {
+            for (auto& keyval : *this)
+                if (keyval.key() == key)
+                    return keyval.value();
+            // TODO throw
+            return {};
+        }
+
+        template <class T>
+        T _or(T def_value)
+        {
+            if (me == nullptr)
+                return def_value;
+            return (T) *this;
+        }
+        std::string _or(const char* def_value)
+        {
+            if (me == nullptr)
+                return def_value;
+            return str();
+        }
+
+        template <class T>
+        T get_or(const char* key, T def_value)
+        {
+            if (me == nullptr)
+                return def_value;
+            for (auto& keyval : *this)
+                if (keyval.key() == key)
+                    return (T)keyval.value();
+            return def_value;
+        }
+        std::string get_or(const char* key, const char* def_value)
+        {
+            if (me == nullptr)
+                return def_value;
+            for (auto& keyval : *this)
+                if (keyval.key() == key)
+                    return keyval.value().str();
+            return def_value;
+        }
+
+        Value operator[](int index)
+        {
+            Value ret = this->begin();
+            Value end = this->end();
+            for (int i = 0; i < index && ret != end; ++i)
+                ++ret;
+            return ret;
+        }
+        bool exists()
+        {
+            return me != nullptr;
+        }
+        size_t size()
+        {
+            Value ret = this->begin();
+            size_t count = 0;
+            while (ret != this->end())
+            {
+                ++count;
+                ++ret;
+            }
+            return count;
+        }
+
+        std::string key()
+        {
+            if (me == nullptr)
+                return "";
+            Value key = me + 1;
+            return key.str();
+        }
+        Value value()
+        {
+            if (me == nullptr)
+                return nullptr;
+            Value val = me + 2;
+            return val;
+        }
+
+        Value begin()
+        {
+            if (me == nullptr)
+                return {nullptr};
+            return {me + 1};
+        }
+        Value end()
+        {
+            if (me == nullptr)
+                return {nullptr};
+            return {me + me->size};
+        }
+        std::string raw()
+        {
+            return {me->text_start, me->text_end};
+        }
+        std::string str()
+        {
+            std::string ret = "";
+            for (char* ch = me->text_start; ch < me->text_end; ++ch)
+            {
+                if (*ch == '\\')
+                {
+                    ++ch;
+                    switch (*ch)
+                    {
+                        case '\\': ret.push_back('\\'); break;
+                        case 'n': ret.push_back('\n'); break;
+                        case 't': ret.push_back('\t'); break;
+                        case 'b': ret.push_back('\b'); break;
+                        case 'f': ret.push_back('\f'); break;
+                        case 'r': ret.push_back('\r'); break;
+                        case '"': ret.push_back('"'); break;
+                        default:
+                            ret.push_back(*ch);
+                    }
+                }
+                else
+                    ret.push_back(*ch);
+            }
+            return ret;
+        }
+
+        // clang-format off
+        std::string asString() { return str(); }
+        bool asBool() { return me->type == _detail::Type::true_; }
+        int asInt() { return strtol(me->text_start, nullptr, 10); }
+        long asLong() { return strtol(me->text_start, nullptr, 10); }
+        float asFloat() { return strtof(me->text_start, nullptr); }
+        double asDouble() { return strtod(me->text_start, nullptr); }
+
+        operator std::string() { return str(); }
+        operator bool() { return me->type == _detail::Type::true_; }
+        operator int() { return strtol(me->text_start, nullptr, 10); }
+        operator long() { return strtol(me->text_start, nullptr, 10); }
+        operator float() { return strtof(me->text_start, nullptr); }
+        operator double() { return strtod(me->text_start, nullptr); }
+
+        bool operator==(const std::string& rhs) { return operator std::string() == rhs; }
+        bool operator==(const char* rhs) { return operator std::string() == rhs; }
+        bool operator==(long rhs) { return operator long() == rhs; }
+        bool operator==(int rhs) { return operator int() == rhs; }
+        bool operator==(float rhs) { return operator float() == rhs; }
+        bool operator==(double rhs) { return operator double() == rhs; }
+        bool operator==(bool rhs) { return operator bool() == rhs; }
+
+        bool operator!=(const std::string& rhs) { return operator std::string() != rhs; }
+        bool operator!=(const char* rhs) { return operator std::string() != rhs; }
+        bool operator!=(long rhs) { return operator long() != rhs; }
+        bool operator!=(int rhs) { return operator int() != rhs; }
+        bool operator!=(float rhs) { return operator float() != rhs; }
+        bool operator!=(double rhs) { return operator double() != rhs; }
+        bool operator!=(bool rhs) { return operator bool() != rhs; }
+
+        bool isNull() { return me->type == _detail::Type::null; }
+        bool isNumber() { return me->type == _detail::Type::number; }
+        bool isString() { return me->type == _detail::Type::string; }
+        bool isObject() { return me->type == _detail::Type::object; }
+        bool isArray() { return me->type == _detail::Type::array; }
+        // clang-format on
+    };
+
     /**
-     * Has ~2x memory overhead (plus string), but is fast. 
+     * Has ~2x memory overhead (plus string), but is fast.
      */
-    class Reader : public _detail::Json
+    class Reader : public Value
     {
       private:
       public:
@@ -204,6 +268,8 @@ namespace Json
                         tree.emplace_back(_detail::Type::string, &text[i + 1]);
                         do
                         {
+                            if (text[i] == '\\')
+                                ++i;
                             ++i;
                         } while (text[i] != '"');
                         tree.back().text_end = &text[i];
@@ -303,11 +369,13 @@ namespace Json
 
       public:
         Reader(){};
+
         Reader(std::string&& input)
             : text(input)
         {
             _parse();
         }
+
         Reader(const char* input)
             : text(input)
         {

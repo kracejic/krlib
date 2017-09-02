@@ -77,11 +77,34 @@ TEST_CASE("JsonReader simple object")
     REQUIRE(r.get_or("num2", 100) == 100);
     REQUIRE(r.get_or("nu", 100) == 100);
     REQUIRE(r.get_or("nu", 5.6) == 5.6);
+    
+    REQUIRE(r["test"]._or("xx") == "first");
+    REQUIRE(r["tes"]._or("xx") == "xx");
+    REQUIRE(r["tests"]._or("xx") == "xx");
+    REQUIRE(r["tests"]._or(def) == "xx");
+    REQUIRE(r["num"]._or(100) == 56);
+    REQUIRE(r["num2"]._or(100) == 100);
+    REQUIRE(r["nu"]._or(100) == 100);
+    REQUIRE(r["nu"]._or(5.6) == 5.6);
+    
+    REQUIRE(r["nothere"].get_or("nu", 5.6) == 5.6);
+    REQUIRE(r["nothere"][5]["xx"].get_or("nu", 5.6) == 5.6);
+    REQUIRE(not r["nothere"][5]["xx"].exists());
+    REQUIRE(not r["nothere"].exists());
+    REQUIRE(r["num"].exists());
 
     // std::cout << "r.text.size() = " << r.text.size() << "\n";
     // size_t s = (int8_t*)&(*(r.tree.end())) - (int8_t*)&(*(r.tree.begin()));
     // std::cout << "s = " << s << "\n";
     // std::cout << "r.tree.size() = " << r.tree.size() << "\n";
+}
+
+TEST_CASE("JsonReader escaping")
+{
+    kr::Json::Reader r{R"("\"tes\nt\t")"};
+
+    REQUIRE(r == "\"tes\nt\t");
+    REQUIRE(r.raw() == R"(\"tes\nt\t)");
 }
 
 

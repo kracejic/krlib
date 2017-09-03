@@ -6,72 +6,76 @@ class CanaryObject
 {
   private:
   public:
-    int a = 0;
-    int b = 0;
+    int id = 0;
+    int val = 0;
     CanaryObject()
     {
         state = State::construct1;
-        states[a] = State::construct1;
+        states[id] = State::construct1;
     }
     CanaryObject(int i)
     {
         state = State::construct2;
-        states[a] = State::construct2;
-        b = i;
+        states[id] = State::construct2;
+        val = i;
     }
     CanaryObject(int i, int canaryIndex)
     {
-        a = canaryIndex;
+        id = canaryIndex;
         state = State::construct2;
-        states[a] = State::construct2;
-        b = i;
+        states[id] = State::construct2;
+        val = i;
     }
     CanaryObject(const CanaryObject& p)
     {
-        a = p.a;
+        id = p.id;
         state = State::copyConst;
-        states[a] = State::copyConst;
+        states[id] = State::copyConst;
     };
     CanaryObject& operator=(const CanaryObject& p)
     {
-        a = p.a;
+        id = p.id;
         state = State::copyAssign;
-        states[a] = State::copyAssign;
+        states[id] = State::copyAssign;
         return *this;
     };
     CanaryObject(CanaryObject&& p)
     {
-        a = p.a;
-        p.a = 255;
+        id = p.id;
+        p.id = 255;
+        val = p.val;
+        p.val = 255;
         p.state = State::movedFrom;
         state = State::moveConst;
-        states[a] = State::moveConst;
+        states[id] = State::moveConst;
     };
     CanaryObject& operator=(CanaryObject&& p)
     {
-        a = p.a;
-        p.a = 255;
+        id = p.id;
+        p.id = 255;
+        val = p.val;
+        p.val = 255;
         p.state = State::movedFrom;
         state = State::moveAssign;
-        states[a] = State::moveAssign;
+        states[id] = State::moveAssign;
         return *this;
     };
     enum class State
     {
-        undef,
-        construct1,
-        construct2,
-        copyConst,
-        copyAssign,
-        moveConst,
-        moveAssign,
-        movedFrom,
-        destruct
+        undef,      // 0
+        construct1, // 1
+        construct2, // 2
+        copyConst,  // 3
+        copyAssign, // 4
+        moveConst,  // 5
+        moveAssign, // 6
+        movedFrom,  // 7
+        destruct    // 8
     };
     ~CanaryObject()
     {
         state = State::destruct;
-        states[a] = State::destruct;
+        states[id] = State::destruct;
     }
 
     State state;
@@ -81,7 +85,6 @@ class CanaryObject
         for (int i = 0; i < 256; ++i)
             states[i] = State::undef;
     }
-
 };
 
 

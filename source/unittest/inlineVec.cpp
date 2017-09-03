@@ -92,3 +92,60 @@ TEST_CASE("inlineVec canary")
     REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::moveConst);
     REQUIRE(t.back().state == kr::CanaryObject::State::moveConst);
 }
+
+
+TEST_CASE("inlineVec erase")
+{
+    kr::CanaryObject::initStates();
+    kr::inlineVec<kr::CanaryObject, 13> t;
+    
+    t.emplace_back(1,1);
+    t.emplace_back(2,2);
+    t.emplace_back(3,3);
+    t.emplace_back(4,4);
+
+    t.erase(1);
+    REQUIRE(t.size() == 3);
+
+    REQUIRE(t[0].state == kr::CanaryObject::State::construct2);
+    REQUIRE(t[0].val == 1);
+    REQUIRE(t[1].state == kr::CanaryObject::State::moveAssign);
+    REQUIRE(t[1].val == 3);
+    REQUIRE(t[2].state == kr::CanaryObject::State::moveAssign);
+    REQUIRE(t[2].val == 4);
+    REQUIRE(t[3].state == kr::CanaryObject::State::movedFrom);
+    REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::construct2);
+    REQUIRE(kr::CanaryObject::states[2] == kr::CanaryObject::State::destruct);
+    REQUIRE(kr::CanaryObject::states[3] == kr::CanaryObject::State::moveAssign);
+    REQUIRE(kr::CanaryObject::states[4] == kr::CanaryObject::State::moveAssign);
+}
+
+
+TEST_CASE("inlineVec insert")
+{
+    kr::CanaryObject::initStates();
+    kr::inlineVec<kr::CanaryObject, 13> t;
+    
+    t.emplace_back(1,1);
+    t.emplace_back(2,2);
+    t.emplace_back(3,3);
+    t.emplace_back(4,4);
+
+    REQUIRE(t.size() == 4);
+
+    REQUIRE(t[0].val == 1);
+    t.insert(1,{5,5});
+    REQUIRE(t.size() == 5);
+    REQUIRE(t[0].val == 1);
+    REQUIRE(t[1].val == 5);
+    REQUIRE(t[2].val == 2);
+    REQUIRE(t[3].val == 3);
+    REQUIRE(t[4].val == 4);
+    REQUIRE(t[1].state == kr::CanaryObject::State::moveAssign);
+    REQUIRE(kr::CanaryObject::states[5] == kr::CanaryObject::State::moveAssign);
+
+    REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::construct2);
+    REQUIRE(kr::CanaryObject::states[2] == kr::CanaryObject::State::moveAssign);
+    REQUIRE(kr::CanaryObject::states[3] == kr::CanaryObject::State::moveAssign);
+    REQUIRE(kr::CanaryObject::states[4] == kr::CanaryObject::State::moveConst);
+}

@@ -12,7 +12,8 @@ namespace _inlineVec_detail
         unsigned char dummy_;
         T val;
 
-        constexpr storage_t() noexcept : dummy_(){};
+        constexpr storage_t() noexcept
+            : dummy_(){};
 
         constexpr storage_t(T& other)
             : val(other){};
@@ -43,12 +44,12 @@ class inlineVec
     inlineVec() = default;
     inlineVec(const inlineVec<T, max_vector_size>& rhs)
     {
-        for(const auto& it : rhs)
+        for (const auto& it : rhs)
             this->push_back(it);
     }
     inlineVec(inlineVec<T, max_vector_size>&& rhs)
     {
-        for(const auto& it : rhs)
+        for (const auto& it : rhs)
             this->push_back(std::move(it));
         rhs.count = 0;
     }
@@ -131,6 +132,65 @@ class inlineVec
     {
         return count == 0;
     }
+    void erase(int pos)
+    {
+        data[pos].val.~T();
+        std::move((T*)&(data[pos + 1]), (T*)&data[count].val, (T*)&(data[pos]));
+        count--;
+    }
+    T* insert(int pos, const T& value)
+    {
+        if (count == 0)
+        {
+            new (&data[pos].val) T(value);
+            count++;
+            return begin();
+        }
+        new (&data[count].val) T(std::move(data[count-1].val));
+        std::move_backward(
+            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+        count++;
+        // vector was size 0
+        data[pos].val = std::move(value);
+
+        return (T*)&(data[pos].val);
+    }
+    T* insert(int pos, T&& value)
+    {
+        if (count == 0)
+        {
+            new (&data[pos].val) T(std::move(value));
+            count++;
+            return begin();
+        }
+        new (&data[count].val) T(std::move(data[count-1].val));
+        std::move_backward(
+            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+        count++;
+        // vector was size 0
+        data[pos].val = std::move(value);
+
+        return (T*)&(data[pos].val);
+    }
+        // new (&data[count].val) T((args)...);
+    template <class... Args>
+    T* insert(int pos, Args&&... args)
+    {
+        if (count == 0)
+        {
+            new (&data[pos].val) T((args)...);
+            count++;
+            return begin();
+        }
+        new (&data[count].val) T(std::move(data[count-1].val));
+        std::move_backward(
+            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+        count++;
+        // vector was size 0
+        new (&data[pos].val) T((args)...);
+        return (T*)&(data[pos].val);
+    }
+    
 
 
     T* begin()
@@ -139,7 +199,7 @@ class inlineVec
     }
     T* end()
     {
-        return &data[count + 1].val;
+        return &data[count].val;
     }
 };
 

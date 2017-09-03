@@ -11,6 +11,7 @@ set(SRCTEST
     explicit.cpp
     optional.cpp
     inlineVec.cpp
+    inlineRing.cpp
     jsonReader.cpp
     )
 

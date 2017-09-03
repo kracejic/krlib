@@ -49,7 +49,7 @@ class inlineVec
     }
     inlineVec(inlineVec<T, max_vector_size>&& rhs)
     {
-        for (const auto& it : rhs)
+        for (auto& it : rhs)
             this->push_back(std::move(it));
         rhs.count = 0;
     }

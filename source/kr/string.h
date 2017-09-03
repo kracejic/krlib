@@ -144,8 +144,8 @@ std::vector<std::string> split(const std::string& text,
     const std::string& delimiters = "\t\n ", int maxSplits = 0)
 {
     std::vector<std::string> result;
-    result.reserve(
-        maxSplits ? maxSplits + 1 : 10); // 10 is guessed capacity for most cases
+    result.reserve(maxSplits ? maxSplits + 1
+                             : 10); // 10 is guessed capacity for most cases
     int numSplits = 0;
 
     size_t start, pos;

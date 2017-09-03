@@ -100,7 +100,8 @@ TEST_CASE("CanaryObject")
 
     {
         kr::optional<kr::CanaryObject> val1(2);
-        REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::construct2);
+        REQUIRE(
+            kr::CanaryObject::states[0] == kr::CanaryObject::State::construct2);
     }
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::destruct);
 }

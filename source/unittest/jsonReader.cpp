@@ -77,7 +77,7 @@ TEST_CASE("JsonReader simple object")
     REQUIRE(r.get_or("num2", 100) == 100);
     REQUIRE(r.get_or("nu", 100) == 100);
     REQUIRE(r.get_or("nu", 5.6) == 5.6);
-    
+
     REQUIRE(r["test"]._or("xx") == "first");
     REQUIRE(r["tes"]._or("xx") == "xx");
     REQUIRE(r["tests"]._or("xx") == "xx");
@@ -86,7 +86,7 @@ TEST_CASE("JsonReader simple object")
     REQUIRE(r["num2"]._or(100) == 100);
     REQUIRE(r["nu"]._or(100) == 100);
     REQUIRE(r["nu"]._or(5.6) == 5.6);
-    
+
     REQUIRE(r["nothere"].get_or("nu", 5.6) == 5.6);
     REQUIRE(r["nothere"][5]["xx"].get_or("nu", 5.6) == 5.6);
     REQUIRE(not r["nothere"][5]["xx"].exists());
@@ -106,5 +106,3 @@ TEST_CASE("JsonReader escaping")
     REQUIRE(r == "\"tes\nt\t");
     REQUIRE(r.raw() == R"(\"tes\nt\t)");
 }
-
-

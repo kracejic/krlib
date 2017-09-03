@@ -88,7 +88,7 @@ namespace Json
         {
             if (me == nullptr)
                 return def_value;
-            return (T) *this;
+            return (T) * this;
         }
         std::string _or(const char* def_value)
         {
@@ -189,8 +189,7 @@ namespace Json
                         case 'f': ret.push_back('\f'); break;
                         case 'r': ret.push_back('\r'); break;
                         case '"': ret.push_back('"'); break;
-                        default:
-                            ret.push_back(*ch);
+                        default: ret.push_back(*ch);
                     }
                 }
                 else

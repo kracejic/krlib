@@ -10,7 +10,8 @@ namespace _optional_detail
         unsigned char dummy_;
         T val;
 
-        constexpr storage_t() noexcept : dummy_(){};
+        constexpr storage_t() noexcept
+            : dummy_(){};
 
         constexpr storage_t(T& other)
             : val(other){};
@@ -20,7 +21,9 @@ namespace _optional_detail
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
-            : val((args)...){}
+            : val((args)...)
+        {
+        }
 
         ~storage_t(){};
     };
@@ -63,7 +66,9 @@ class optional
     template <class... Args>
     optional(Args&&... args)
         : storage((args)...)
-        , initialized(true){}
+        , initialized(true)
+    {
+    }
 
     ~optional()
     {
@@ -91,7 +96,7 @@ class optional
     {
         return &storage.val;
     };
-    constexpr const T& operator*() const&
+    constexpr const T& operator*() const &
     {
         return storage.val;
     };
@@ -99,7 +104,7 @@ class optional
     {
         return storage.val;
     };
-    constexpr const T&& operator*() const&&
+    constexpr const T&& operator*() const &&
     {
         return storage.val;
     };

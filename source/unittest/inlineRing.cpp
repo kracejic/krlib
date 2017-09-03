@@ -4,10 +4,11 @@
 #include <string>
 
 #include <iostream>
+#include <numeric>
 
 TEST_CASE("inlineRing")
 {
-    kr::inlineRing<int, 8> ring;
+    kr::inlineRing8<int, 8> ring;
 
     ring.push_back(1);
     ring.push_back(2);
@@ -17,8 +18,10 @@ TEST_CASE("inlineRing")
     ring.push_back(5);
     ring.push_back(6);
     ring.push_back(7);
+    REQUIRE(not ring.full());
     ring.push_back(8);
     REQUIRE(ring.size() == 8);
+    REQUIRE(ring.full());
 
     REQUIRE(ring.front() == 1);
     REQUIRE(ring.back() == 8);
@@ -54,5 +57,22 @@ TEST_CASE("inlineRing")
     int sum = 0;
     for (auto& i : ring)
         sum += i;
-    REQUIRE(sum == (6+7+8+9+10+11+12));
+    REQUIRE(sum == (6 + 7 + 8 + 9 + 10 + 11 + 12));
+
+    ring.erase(1);
+    REQUIRE(std::accumulate(ring.begin(), ring.end(), 0) == 56);
+    ring.erase(3);
+    REQUIRE(std::accumulate(ring.begin(), ring.end(), 0) == 46);
+
+    REQUIRE(ring.size() == 5);
+    ring.insert(2, 13);
+    REQUIRE(ring.size() == 6);
+
+    REQUIRE(ring[0] == 6);
+    REQUIRE(ring[1] == 8);
+    REQUIRE(ring[2] == 13);
+
+    REQUIRE(ring[3] == 9);
+    REQUIRE(ring[4] == 11);
+    REQUIRE(ring[5] == 12);
 }

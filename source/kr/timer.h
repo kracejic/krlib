@@ -22,24 +22,21 @@ class SpeedTimer
     };
     std::string str()
     {
-        return std::to_string(
-                   std::chrono::duration_cast<
-                       std::chrono::duration<double, std::ratio<1, 1000>>>(
-                       mEnd - mStart)
-                       .count()) +
+        return std::to_string(std::chrono::duration_cast<std::chrono::duration<
+                                  double, std::ratio<1, 1000>>>(
+                   mEnd - mStart).count()) +
                "ms";
     };
     double getSec()
     {
         return std::chrono::duration_cast<std::chrono::duration<double>>(
-                   mEnd - mStart)
+            mEnd - mStart)
             .count();
     };
     double getMSec()
     {
         return std::chrono::duration_cast<
-                   std::chrono::duration<double, std::ratio<1, 1000>>>(
-                   mEnd - mStart)
+            std::chrono::duration<double, std::ratio<1, 1000>>>(mEnd - mStart)
             .count();
     };
     std::string stop_print_restart()

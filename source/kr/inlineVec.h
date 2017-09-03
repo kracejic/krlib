@@ -124,6 +124,10 @@ class inlineVec
     {
         return max_vector_size;
     }
+    bool full()
+    {
+        return count >= max_vector_size;
+    }
     size_t size()
     {
         return count;
@@ -146,12 +150,12 @@ class inlineVec
             count++;
             return begin();
         }
-        new (&data[count].val) T(std::move(data[count-1].val));
+        new (&data[count].val) T(std::move(data[count - 1].val));
         std::move_backward(
-            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+            (T*)&(data[pos]), (T*)&data[count - 1].val, (T*)&(data[count]));
         count++;
         // vector was size 0
-        data[pos].val = std::move(value);
+        data[pos].val = value;
 
         return (T*)&(data[pos].val);
     }
@@ -163,16 +167,16 @@ class inlineVec
             count++;
             return begin();
         }
-        new (&data[count].val) T(std::move(data[count-1].val));
+        new (&data[count].val) T(std::move(data[count - 1].val));
         std::move_backward(
-            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+            (T*)&(data[pos]), (T*)&data[count - 1].val, (T*)&(data[count]));
         count++;
         // vector was size 0
         data[pos].val = std::move(value);
 
         return (T*)&(data[pos].val);
     }
-        // new (&data[count].val) T((args)...);
+    // new (&data[count].val) T((args)...);
     template <class... Args>
     T* insert(int pos, Args&&... args)
     {
@@ -182,15 +186,14 @@ class inlineVec
             count++;
             return begin();
         }
-        new (&data[count].val) T(std::move(data[count-1].val));
+        new (&data[count].val) T(std::move(data[count - 1].val));
         std::move_backward(
-            (T*)&(data[pos]), (T*)&data[count-1].val, (T*)&(data[count]));
+            (T*)&(data[pos]), (T*)&data[count - 1].val, (T*)&(data[count]));
         count++;
         // vector was size 0
         new (&data[pos].val) T((args)...);
         return (T*)&(data[pos].val);
     }
-    
 
 
     T* begin()

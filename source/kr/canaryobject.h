@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 namespace kr
 {
 // Do not forget this
@@ -6,6 +8,15 @@ class CanaryObject
 {
   private:
   public:
+    void throwIfInvalid() const
+    {
+        if (state == State::undef)
+            throw std::runtime_error("State::undef");
+        if (state == State::movedFrom)
+            throw std::runtime_error("State::movedFrom");
+        if (state == State::destruct)
+            throw std::runtime_error("State::destruct");
+    }
     int id = 0;
     int val = 0;
     CanaryObject()
@@ -28,12 +39,14 @@ class CanaryObject
     }
     CanaryObject(const CanaryObject& p)
     {
+        p.throwIfInvalid();
         id = p.id;
         state = State::copyConst;
         states[id] = State::copyConst;
     };
     CanaryObject& operator=(const CanaryObject& p)
     {
+        p.throwIfInvalid();
         id = p.id;
         state = State::copyAssign;
         states[id] = State::copyAssign;
@@ -41,6 +54,7 @@ class CanaryObject
     };
     CanaryObject(CanaryObject&& p)
     {
+        p.throwIfInvalid();
         id = p.id;
         p.id = 255;
         val = p.val;
@@ -51,6 +65,7 @@ class CanaryObject
     };
     CanaryObject& operator=(CanaryObject&& p)
     {
+        p.throwIfInvalid();
         id = p.id;
         p.id = 255;
         val = p.val;

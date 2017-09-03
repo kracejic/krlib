@@ -21,9 +21,9 @@ struct NamedType
         : v(value){};
 
     template <typename T_ = T>
-    explicit NamedType(
-        T&& value, typename std::enable_if<!std::is_reference<T_>{},
-                       std::nullptr_t>::type = nullptr)
+    explicit NamedType(T&& value,
+        typename std::enable_if<!std::is_reference<T_>{},
+            std::nullptr_t>::type = nullptr)
         : v(std::move(value))
     {
     }

@@ -8,10 +8,12 @@ using namespace std;
 TEST_CASE("inlineVec int")
 {
     kr::inlineVec<int, 10> t;
+    REQUIRE(not t.full());
 
     t.push_back(5);
     t.push_back(3);
 
+    REQUIRE(not t.full());
     REQUIRE(t[0] == 5);
     REQUIRE(t.at(1) == 3);
     REQUIRE_THROWS_AS(t.at(2), std::out_of_range);
@@ -21,6 +23,13 @@ TEST_CASE("inlineVec int")
     for (auto& i : t)
         sum += i;
     REQUIRE(sum == 9);
+
+    kr::inlineVec<int, 2> t2;
+    REQUIRE(not t2.full());
+    t2.push_back(2);
+    REQUIRE(not t2.full());
+    t2.push_back(2);
+    REQUIRE(t2.full());
 }
 
 TEST_CASE("inlineVec string")
@@ -73,7 +82,7 @@ TEST_CASE("inlineVec canary")
 {
     kr::CanaryObject::initStates();
     kr::inlineVec<kr::CanaryObject, 13> t;
-    
+
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::undef);
     t.emplace_back();
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::construct1);
@@ -84,7 +93,7 @@ TEST_CASE("inlineVec canary")
     t.pop_back();
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::destruct);
 
-    kr::CanaryObject c{0,1};
+    kr::CanaryObject c{0, 1};
     REQUIRE(c.state == kr::CanaryObject::State::construct2);
     REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::construct2);
     t.push_back(std::move(c));
@@ -98,11 +107,11 @@ TEST_CASE("inlineVec erase")
 {
     kr::CanaryObject::initStates();
     kr::inlineVec<kr::CanaryObject, 13> t;
-    
-    t.emplace_back(1,1);
-    t.emplace_back(2,2);
-    t.emplace_back(3,3);
-    t.emplace_back(4,4);
+
+    t.emplace_back(1, 1);
+    t.emplace_back(2, 2);
+    t.emplace_back(3, 3);
+    t.emplace_back(4, 4);
 
     t.erase(1);
     REQUIRE(t.size() == 3);
@@ -125,16 +134,16 @@ TEST_CASE("inlineVec insert")
 {
     kr::CanaryObject::initStates();
     kr::inlineVec<kr::CanaryObject, 13> t;
-    
-    t.emplace_back(1,1);
-    t.emplace_back(2,2);
-    t.emplace_back(3,3);
-    t.emplace_back(4,4);
+
+    t.emplace_back(1, 1);
+    t.emplace_back(2, 2);
+    t.emplace_back(3, 3);
+    t.emplace_back(4, 4);
 
     REQUIRE(t.size() == 4);
 
     REQUIRE(t[0].val == 1);
-    t.insert(1,{5,5});
+    t.insert(1, {5, 5});
     REQUIRE(t.size() == 5);
     REQUIRE(t[0].val == 1);
     REQUIRE(t[1].val == 5);

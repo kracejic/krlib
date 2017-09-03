@@ -52,8 +52,8 @@ class inlineRing
         return index & (max_ring_size - 1);
     }
 
-        static_assert(_inlineRing_detail::is_powerof2(max_ring_size),
-            "size must be power of two");
+    static_assert(_inlineRing_detail::is_powerof2(max_ring_size),
+        "size must be power of two");
 
   public:
     inlineRing() = default;
@@ -124,7 +124,7 @@ class inlineRing
     void pop_back()
     {
         mBack--;
-        data[addr(mBack-1)].val.~T();
+        data[addr(mBack - 1)].val.~T();
     }
 
     T& front()
@@ -133,7 +133,7 @@ class inlineRing
     }
     T& back()
     {
-        return data[addr(mBack-1)].val;
+        return data[addr(mBack - 1)].val;
     }
 
     T& operator[](uint32_t index)
@@ -224,13 +224,43 @@ class inlineRing
     // }
     //
     //
-    T* begin()
+
+    class InlineRingIterator
     {
-        return &data[0].val;
+      private:
+        uint32_t pos;
+        inlineRing<T, max_ring_size>& parent;
+
+      public:
+        InlineRingIterator(inlineRing<T, max_ring_size>& _parent, uint32_t _pos)
+            : parent(_parent)
+            , pos(_pos){};
+        InlineRingIterator& operator--()
+        {
+            pos--;
+            return *this;
+        }
+        InlineRingIterator& operator++()
+        {
+            pos++;
+            return *this;
+        }
+        bool operator!=(const InlineRingIterator& rhs)
+        {
+            return pos != rhs.pos;
+        }
+        T& operator*()
+        {
+            return parent.data[parent.addr(pos)].val;
+        }
+    };
+    InlineRingIterator begin()
+    {
+        return InlineRingIterator(*this, mFront);
     }
-    T* end()
+    InlineRingIterator end()
     {
-        return &data[1].val;
+        return InlineRingIterator(*this, mBack);
     }
 };
 

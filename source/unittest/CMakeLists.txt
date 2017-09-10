@@ -13,6 +13,7 @@ set(SRCTEST
     inlineVec.cpp
     inlineRing.cpp
     jsonReader.cpp
+    shared_ptr_st.cpp
     )
 
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})

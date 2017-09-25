@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cctype>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -44,8 +45,10 @@ namespace Json
 
     class Value
     {
-      public:
+      protected:
         _detail::TreeNode* me{nullptr};
+
+      public:
         Value(){};
         Value(_detail::TreeNode* _it)
             : me(_it){};
@@ -72,15 +75,6 @@ namespace Json
         {
             (void)p;
             return isNull();
-        }
-
-        Value operator[](const char* key)
-        {
-            for (auto& keyval : *this)
-                if (keyval.key() == key)
-                    return keyval.value();
-            // TODO throw
-            return {};
         }
 
         template <class T>
@@ -117,6 +111,25 @@ namespace Json
             return def_value;
         }
 
+        /// Object accessor.
+        Value operator[](const std::string& key)
+        {
+            for (auto& keyval : *this)
+                if (keyval.key() == key)
+                    return keyval.value();
+            return {};
+        }
+
+        /// Object accessor.
+        Value operator[](const char* key)
+        {
+            for (auto& keyval : *this)
+                if (keyval.key() == key)
+                    return keyval.value();
+            return {};
+        }
+
+        /// Array accessor.
         Value operator[](int index)
         {
             Value ret = this->begin();
@@ -125,12 +138,17 @@ namespace Json
                 ++ret;
             return ret;
         }
+
+        /// Returns true when object does exists.
         bool exists()
         {
             return me != nullptr;
         }
+
+        /// Number of elements in array or in object.
         size_t size()
         {
+            throwIfInvalid();
             Value ret = this->begin();
             size_t count = 0;
             while (ret != this->end())
@@ -141,17 +159,18 @@ namespace Json
             return count;
         }
 
+        /// Returns key when iterating over key/value pair.
         std::string key()
         {
-            if (me == nullptr)
-                return "";
+            throwIfInvalid();
             Value key = me + 1;
             return key.str();
         }
+
+        /// Returns value when iterating over key/value pair.
         Value value()
         {
-            if (me == nullptr)
-                return nullptr;
+            throwIfInvalid();
             Value val = me + 2;
             return val;
         }
@@ -170,10 +189,12 @@ namespace Json
         }
         std::string raw()
         {
+            throwIfInvalid();
             return {me->text_start, me->text_end};
         }
         std::string str()
         {
+            throwIfInvalid();
             std::string ret = "";
             for (char* ch = me->text_start; ch < me->text_end; ++ch)
             {
@@ -198,20 +219,26 @@ namespace Json
             return ret;
         }
 
-        // clang-format off
-        std::string asString() { return str(); }
-        bool asBool() { return me->type == _detail::Type::true_; }
-        int asInt() { return strtol(me->text_start, nullptr, 10); }
-        long asLong() { return strtol(me->text_start, nullptr, 10); }
-        float asFloat() { return strtof(me->text_start, nullptr); }
-        double asDouble() { return strtod(me->text_start, nullptr); }
+        void throwIfInvalid()
+        {
+            if (me == nullptr)
+                throw std::runtime_error{"Element is not in here."};
+        }
 
-        operator std::string() { return str(); }
-        operator bool() { return me->type == _detail::Type::true_; }
-        operator int() { return strtol(me->text_start, nullptr, 10); }
-        operator long() { return strtol(me->text_start, nullptr, 10); }
-        operator float() { return strtof(me->text_start, nullptr); }
-        operator double() { return strtod(me->text_start, nullptr); }
+        // clang-format off
+        std::string asString() { throwIfInvalid(); return str(); }
+        bool asBool() { throwIfInvalid(); return me->type == _detail::Type::true_; }
+        int asInt() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        long asLong() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        float asFloat() { throwIfInvalid(); return strtof(me->text_start, nullptr); }
+        double asDouble() { throwIfInvalid(); return strtod(me->text_start, nullptr); }
+
+        operator std::string() { throwIfInvalid(); return str(); }
+        operator bool() { throwIfInvalid(); return me->type == _detail::Type::true_; }
+        operator int() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        operator long() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        operator float() { throwIfInvalid(); return strtof(me->text_start, nullptr); }
+        operator double() { throwIfInvalid(); return strtod(me->text_start, nullptr); }
 
         bool operator==(const std::string& rhs) { return operator std::string() == rhs; }
         bool operator==(const char* rhs) { return operator std::string() == rhs; }
@@ -229,11 +256,11 @@ namespace Json
         bool operator!=(double rhs) { return operator double() != rhs; }
         bool operator!=(bool rhs) { return operator bool() != rhs; }
 
-        bool isNull() { return me->type == _detail::Type::null; }
-        bool isNumber() { return me->type == _detail::Type::number; }
-        bool isString() { return me->type == _detail::Type::string; }
-        bool isObject() { return me->type == _detail::Type::object; }
-        bool isArray() { return me->type == _detail::Type::array; }
+        bool isNull() { throwIfInvalid(); return me->type == _detail::Type::null; }
+        bool isNumber() { throwIfInvalid(); return me->type == _detail::Type::number; }
+        bool isString() { throwIfInvalid(); return me->type == _detail::Type::string; }
+        bool isObject() { throwIfInvalid(); return me->type == _detail::Type::object; }
+        bool isArray() { throwIfInvalid(); return me->type == _detail::Type::array; }
         // clang-format on
     };
 
@@ -331,6 +358,12 @@ namespace Json
                         tree.emplace_back(_detail::Type::array, &text[i]);
                         break;
                     case ']':
+                        if (st.empty())
+                            throw std::runtime_error{
+                                "invalid json array closing"};
+                        if (tree[st.back()].type != _detail::Type::array)
+                            throw std::runtime_error{
+                                "invalid json array closing"};
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
                         st.pop_back();
@@ -340,13 +373,19 @@ namespace Json
                         tree.emplace_back(_detail::Type::object, &text[i]);
                         break;
                     case '}':
-                        if (!st.empty() &&
-                            tree[st.back()].type == _detail::Type::keyval)
+                        if (st.empty())
+                            throw std::runtime_error{
+                                "invalid json object closing"};
+
+                        if (tree[st.back()].type == _detail::Type::keyval)
                         {
                             tree[st.back()].text_end = &text[i];
                             tree[st.back()].size = tree.size() - st.back();
                             st.pop_back();
                         }
+                        if (tree[st.back()].type != _detail::Type::object)
+                            throw std::runtime_error{
+                                "invalid json object closing"};
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
                         st.pop_back();

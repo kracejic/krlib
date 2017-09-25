@@ -54,6 +54,10 @@ TEST_CASE("JsonReader simple object")
     REQUIRE(r[0].str() == R"("test":"first")");
     REQUIRE(r[0].key() == "test");
     REQUIRE(r[0].value() == "first");
+    REQUIRE(r[1].key() == "num");
+    REQUIRE(r[1].value() == 56);
+    REQUIRE(r[1].value().isNumber());
+    REQUIRE(r[2].value().isArray());
 
     REQUIRE(r["test"] == "first");
     REQUIRE(r["num"] == 56);
@@ -77,6 +81,9 @@ TEST_CASE("JsonReader simple object")
     REQUIRE(r.get_or("num2", 100) == 100);
     REQUIRE(r.get_or("nu", 100) == 100);
     REQUIRE(r.get_or("nu", 5.6) == 5.6);
+    REQUIRE_THROWS_AS(r["nuuux"] == 5.6, std::runtime_error);
+    REQUIRE_THROWS_AS(r["nuuux"].isNumber(), std::runtime_error);
+    REQUIRE_THROWS_AS(r["nuuux"].asString(), std::runtime_error);
 
     REQUIRE(r["test"]._or("xx") == "first");
     REQUIRE(r["tes"]._or("xx") == "xx");
@@ -105,4 +112,13 @@ TEST_CASE("JsonReader escaping")
 
     REQUIRE(r == "\"tes\nt\t");
     REQUIRE(r.raw() == R"(\"tes\nt\t)");
+}
+
+
+TEST_CASE("NonValid jsons")
+{
+    REQUIRE_THROWS_AS( Reader {R"(})"}, std::runtime_error);
+    REQUIRE_THROWS_AS( Reader {R"([})"}, std::runtime_error);
+    REQUIRE_THROWS_AS( Reader {R"(])"}, std::runtime_error);
+    REQUIRE_THROWS_AS( Reader {R"({])"}, std::runtime_error);
 }

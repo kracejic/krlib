@@ -1,5 +1,5 @@
-#include "catch.hpp"
 #include "kr/JsonReader.h"
+#include "catch.hpp"
 
 #include <iostream>
 
@@ -117,8 +117,8 @@ TEST_CASE("JsonReader escaping")
 
 TEST_CASE("NonValid jsons")
 {
-    REQUIRE_THROWS_AS( Reader {R"(})"}, std::runtime_error);
-    REQUIRE_THROWS_AS( Reader {R"([})"}, std::runtime_error);
-    REQUIRE_THROWS_AS( Reader {R"(])"}, std::runtime_error);
-    REQUIRE_THROWS_AS( Reader {R"({])"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader{R"(})"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader{R"([})"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader{R"(])"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader{R"({])"}, std::runtime_error);
 }

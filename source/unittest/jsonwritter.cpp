@@ -1,5 +1,5 @@
-#include "catch.hpp"
 #include "kr/JsonWritter.h"
+#include "catch.hpp"
 #include "kr/logger.h"
 
 TEST_CASE("JsonWritterTo")
@@ -65,8 +65,7 @@ TEST_CASE("JsonWritter complex object")
     js.endObject();
     js.endObject();
 
-    REQUIRE(
-        js.get() ==
+    REQUIRE(js.get() ==
         R"({"data":{"array":[true,1,false,"ttt",1.500000,2.500000],"obj":true,"val":"val2","val":null}})");
     js.clear();
     REQUIRE(js.get() == "");

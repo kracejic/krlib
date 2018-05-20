@@ -61,30 +61,30 @@ namespace Json
         {
             return *this;
         }
-        bool operator!=(const Value& rhs)
+        bool operator!=(const Value& rhs) const
         {
             return me != rhs.me;
         }
 
-        bool operator!=(std::nullptr_t p)
+        bool operator!=(std::nullptr_t p) const
         {
             (void)p;
             return not isNull();
         }
-        bool operator==(std::nullptr_t p)
+        bool operator==(std::nullptr_t p) const
         {
             (void)p;
             return isNull();
         }
 
         template <class T>
-        T _or(T def_value)
+        T _or(T def_value) const
         {
             if (me == nullptr)
                 return def_value;
             return (T) * this;
         }
-        std::string _or(const char* def_value)
+        std::string _or(const char* def_value) const
         {
             if (me == nullptr)
                 return def_value;
@@ -92,7 +92,7 @@ namespace Json
         }
 
         template <class T>
-        T get_or(const char* key, T def_value)
+        T get_or(const char* key, T def_value) const
         {
             if (me == nullptr)
                 return def_value;
@@ -101,7 +101,7 @@ namespace Json
                     return (T)keyval.value();
             return def_value;
         }
-        std::string get_or(const char* key, const char* def_value)
+        std::string get_or(const char* key, const char* def_value) const
         {
             if (me == nullptr)
                 return def_value;
@@ -112,7 +112,7 @@ namespace Json
         }
 
         /// Object accessor.
-        Value operator[](const std::string& key)
+        Value operator[](const std::string& key) const
         {
             for (auto& keyval : *this)
                 if (keyval.key() == key)
@@ -121,7 +121,7 @@ namespace Json
         }
 
         /// Object accessor.
-        Value operator[](const char* key)
+        Value operator[](const char* key) const
         {
             for (auto& keyval : *this)
                 if (keyval.key() == key)
@@ -130,7 +130,7 @@ namespace Json
         }
 
         /// Array accessor.
-        Value operator[](int index)
+        Value operator[](int index) const
         {
             Value ret = this->begin();
             Value end = this->end();
@@ -140,13 +140,13 @@ namespace Json
         }
 
         /// Returns true when object does exists.
-        bool exists()
+        bool exists() const
         {
             return me != nullptr;
         }
 
         /// Number of elements in array or in object.
-        size_t size()
+        size_t size() const
         {
             throwIfInvalid();
             Value ret = this->begin();
@@ -160,7 +160,7 @@ namespace Json
         }
 
         /// Returns key when iterating over key/value pair.
-        std::string key()
+        std::string key() const
         {
             throwIfInvalid();
             Value key = me + 1;
@@ -168,31 +168,31 @@ namespace Json
         }
 
         /// Returns value when iterating over key/value pair.
-        Value value()
+        Value value() const
         {
             throwIfInvalid();
             Value val = me + 2;
             return val;
         }
 
-        Value begin()
+        Value begin() const
         {
             if (me == nullptr)
                 return {nullptr};
             return {me + 1};
         }
-        Value end()
+        Value end() const
         {
             if (me == nullptr)
                 return {nullptr};
             return {me + me->size};
         }
-        std::string raw()
+        std::string raw() const
         {
             throwIfInvalid();
             return {me->text_start, me->text_end};
         }
-        std::string str()
+        std::string str() const
         {
             throwIfInvalid();
             std::string ret = "";
@@ -203,14 +203,29 @@ namespace Json
                     ++ch;
                     switch (*ch)
                     {
-                        case '\\': ret.push_back('\\'); break;
-                        case 'n': ret.push_back('\n'); break;
-                        case 't': ret.push_back('\t'); break;
-                        case 'b': ret.push_back('\b'); break;
-                        case 'f': ret.push_back('\f'); break;
-                        case 'r': ret.push_back('\r'); break;
-                        case '"': ret.push_back('"'); break;
-                        default: ret.push_back(*ch);
+                        case '\\':
+                            ret.push_back('\\');
+                            break;
+                        case 'n':
+                            ret.push_back('\n');
+                            break;
+                        case 't':
+                            ret.push_back('\t');
+                            break;
+                        case 'b':
+                            ret.push_back('\b');
+                            break;
+                        case 'f':
+                            ret.push_back('\f');
+                            break;
+                        case 'r':
+                            ret.push_back('\r');
+                            break;
+                        case '"':
+                            ret.push_back('"');
+                            break;
+                        default:
+                            ret.push_back(*ch);
                     }
                 }
                 else
@@ -219,48 +234,48 @@ namespace Json
             return ret;
         }
 
-        void throwIfInvalid()
+        void throwIfInvalid() const
         {
             if (me == nullptr)
                 throw std::runtime_error{"Element is not in here."};
         }
 
         // clang-format off
-        std::string asString() { throwIfInvalid(); return str(); }
-        bool asBool() { throwIfInvalid(); return me->type == _detail::Type::true_; }
-        int asInt() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
-        long asLong() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
-        float asFloat() { throwIfInvalid(); return strtof(me->text_start, nullptr); }
-        double asDouble() { throwIfInvalid(); return strtod(me->text_start, nullptr); }
+        std::string asString() const { throwIfInvalid(); return str(); }
+        bool asBool() const { throwIfInvalid(); return me->type == _detail::Type::true_; }
+        int asInt() const { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        long asLong() const { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        float asFloat() const { throwIfInvalid(); return strtof(me->text_start, nullptr); }
+        double asDouble() const { throwIfInvalid(); return strtod(me->text_start, nullptr); }
 
-        operator std::string() { throwIfInvalid(); return str(); }
-        operator bool() { throwIfInvalid(); return me->type == _detail::Type::true_; }
-        operator int() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
-        operator long() { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
-        operator float() { throwIfInvalid(); return strtof(me->text_start, nullptr); }
-        operator double() { throwIfInvalid(); return strtod(me->text_start, nullptr); }
+        operator std::string() const { throwIfInvalid(); return str(); }
+        operator bool() const { throwIfInvalid(); return me->type == _detail::Type::true_; }
+        operator int() const { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        operator long() const { throwIfInvalid(); return strtol(me->text_start, nullptr, 10); }
+        operator float() const { throwIfInvalid(); return strtof(me->text_start, nullptr); }
+        operator double() const { throwIfInvalid(); return strtod(me->text_start, nullptr); }
 
-        bool operator==(const std::string& rhs) { return operator std::string() == rhs; }
-        bool operator==(const char* rhs) { return operator std::string() == rhs; }
-        bool operator==(long rhs) { return operator long() == rhs; }
-        bool operator==(int rhs) { return operator int() == rhs; }
-        bool operator==(float rhs) { return operator float() == rhs; }
-        bool operator==(double rhs) { return operator double() == rhs; }
-        bool operator==(bool rhs) { return operator bool() == rhs; }
+        bool operator==(const std::string& rhs) const { return operator std::string() == rhs; }
+        bool operator==(const char* rhs) const { return operator std::string() == rhs; }
+        bool operator==(long rhs) const { return operator long() == rhs; }
+        bool operator==(int rhs) const { return operator int() == rhs; }
+        bool operator==(float rhs) const { return operator float() == rhs; }
+        bool operator==(double rhs) const { return operator double() == rhs; }
+        bool operator==(bool rhs) const { return operator bool() == rhs; }
 
-        bool operator!=(const std::string& rhs) { return operator std::string() != rhs; }
-        bool operator!=(const char* rhs) { return operator std::string() != rhs; }
-        bool operator!=(long rhs) { return operator long() != rhs; }
-        bool operator!=(int rhs) { return operator int() != rhs; }
-        bool operator!=(float rhs) { return operator float() != rhs; }
-        bool operator!=(double rhs) { return operator double() != rhs; }
-        bool operator!=(bool rhs) { return operator bool() != rhs; }
+        bool operator!=(const std::string& rhs) const { return operator std::string() != rhs; }
+        bool operator!=(const char* rhs) const { return operator std::string() != rhs; }
+        bool operator!=(long rhs) const { return operator long() != rhs; }
+        bool operator!=(int rhs) const { return operator int() != rhs; }
+        bool operator!=(float rhs) const { return operator float() != rhs; }
+        bool operator!=(double rhs) const { return operator double() != rhs; }
+        bool operator!=(bool rhs) const { return operator bool() != rhs; }
 
-        bool isNull() { throwIfInvalid(); return me->type == _detail::Type::null; }
-        bool isNumber() { throwIfInvalid(); return me->type == _detail::Type::number; }
-        bool isString() { throwIfInvalid(); return me->type == _detail::Type::string; }
-        bool isObject() { throwIfInvalid(); return me->type == _detail::Type::object; }
-        bool isArray() { throwIfInvalid(); return me->type == _detail::Type::array; }
+        bool isNull() const { throwIfInvalid(); return me->type == _detail::Type::null; }
+        bool isNumber() const { throwIfInvalid(); return me->type == _detail::Type::number; }
+        bool isString() const { throwIfInvalid(); return me->type == _detail::Type::string; }
+        bool isObject() const { throwIfInvalid(); return me->type == _detail::Type::object; }
+        bool isArray() const { throwIfInvalid(); return me->type == _detail::Type::array; }
         // clang-format on
     };
 
@@ -399,7 +414,8 @@ namespace Json
                             st.pop_back();
                         }
                         break;
-                    default: break;
+                    default:
+                        break;
                 }
             }
             me = &(tree.front());

@@ -96,7 +96,7 @@ class optional
     {
         return &storage.val;
     };
-    constexpr const T& operator*() const &
+    constexpr const T& operator*() const&
     {
         return storage.val;
     };
@@ -104,7 +104,7 @@ class optional
     {
         return storage.val;
     };
-    constexpr const T&& operator*() const &&
+    constexpr const T&& operator*() const&&
     {
         return storage.val;
     };

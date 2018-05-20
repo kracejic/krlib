@@ -5,47 +5,60 @@
 namespace kr
 {
 
+#define KR_TIMER_LAP(timer)                                                    \
+    std::cout << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << " - "   \
+              << timer.lap_str() << std::endl
+
 class SpeedTimer
 {
   private:
     std::chrono::time_point<std::chrono::high_resolution_clock> mStart;
-    std::chrono::time_point<std::chrono::high_resolution_clock> mEnd;
+    std::chrono::duration<double, std::ratio<1, 1000>> mDuration;
 
   public:
+    /// marks start of the timer
     void start()
     {
         mStart = std::chrono::high_resolution_clock::now();
     };
-    void stop()
+
+    /// calculates duration from start and restarts the counter
+    void lap()
     {
-        mEnd = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::high_resolution_clock::now();
+        mDuration = std::chrono::duration_cast<
+            std::chrono::duration<double, std::ratio<1, 1000>>>(end - mStart);
+        mStart = end;
     };
-    std::string str()
+
+    /// string value of last duration "10ms"
+    std::string str() const
     {
-        return std::to_string(std::chrono::duration_cast<std::chrono::duration<
-                                  double, std::ratio<1, 1000>>>(
-                   mEnd - mStart).count()) +
-               "ms";
+        return std::to_string(ms()) + "ms";
     };
-    double getSec()
-    {
-        return std::chrono::duration_cast<std::chrono::duration<double>>(
-            mEnd - mStart)
-            .count();
-    };
-    double getMSec()
+
+    /// returns time in seconds
+    double s() const
     {
         return std::chrono::duration_cast<
-            std::chrono::duration<double, std::ratio<1, 1000>>>(mEnd - mStart)
+            std::chrono::duration<double, std::ratio<1, 1>>>(mDuration)
             .count();
     };
-    std::string stop_print_restart()
+
+    /// returns time in miliseconds
+    double ms() const
     {
-        stop();
-        auto ret = str();
-        start();
-        return ret;
+        return std::chrono::duration_cast<
+            std::chrono::duration<double, std::ratio<1, 1000>>>(mDuration)
+            .count();
+    };
+
+    /// start new lap and returns time of the last one as string (format: 10ms)
+    std::string lap_str()
+    {
+        lap();
+        return str();
     }
 };
 
-} /* kr */
+} // namespace kr

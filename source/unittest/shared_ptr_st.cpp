@@ -63,7 +63,7 @@ TEST_CASE("shared_ptr_st copy assigment")
 
             ptr = new kr::CanaryObject(1, 1);
             REQUIRE(kr::CanaryObject::states[1] ==
-                    kr::CanaryObject::State::construct2);
+                kr::CanaryObject::State::construct2);
             REQUIRE(ptr.use_count() == 1);
 
             ptr2 = ptr;
@@ -94,7 +94,7 @@ TEST_CASE("shared_ptr_st move assigment")
 
             ptr = new kr::CanaryObject(1, 1);
             REQUIRE(kr::CanaryObject::states[1] ==
-                    kr::CanaryObject::State::construct2);
+                kr::CanaryObject::State::construct2);
             REQUIRE(ptr.use_count() == 1);
 
             ptr2 = std::move(ptr);
@@ -178,6 +178,5 @@ TEST_CASE("shared_ptr_st swap")
     REQUIRE(ptr2.unique());
     REQUIRE(ptr2->val == 1);
     REQUIRE(ptr2);
-
 }
 #endif

@@ -229,14 +229,30 @@ namespace Json
         {
             switch (*ch)
             {
-                case '"': target.append("\\\""); break;
-                case '\b': target.append("\\b"); break;
-                case '\n': target.append("\\n"); break;
-                case '\f': target.append("\\f"); break;
-                case '\r': target.append("\\r"); break;
-                case '\t': target.append("\\t"); break;
-                case '\\': target.append("\\\\"); break;
-                default: target.push_back(*ch); break;
+                case '"':
+                    target.append("\\\"");
+                    break;
+                case '\b':
+                    target.append("\\b");
+                    break;
+                case '\n':
+                    target.append("\\n");
+                    break;
+                case '\f':
+                    target.append("\\f");
+                    break;
+                case '\r':
+                    target.append("\\r");
+                    break;
+                case '\t':
+                    target.append("\\t");
+                    break;
+                case '\\':
+                    target.append("\\\\");
+                    break;
+                default:
+                    target.push_back(*ch);
+                    break;
             }
         }
         return target;

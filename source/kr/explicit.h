@@ -103,19 +103,19 @@ struct NamedNumberType
         return *this;
     }
 
-    constexpr bool operator>(const NamedNumberType& other)
+    constexpr bool operator>(const NamedNumberType& other) const
     {
         return this->v > other.v;
     }
-    constexpr bool operator>=(const NamedNumberType& other)
+    constexpr bool operator>=(const NamedNumberType& other) const
     {
         return this->v >= other.v;
     }
-    constexpr bool operator<(const NamedNumberType& other)
+    constexpr bool operator<(const NamedNumberType& other) const
     {
         return this->v < other.v;
     }
-    constexpr bool operator<=(const NamedNumberType& other)
+    constexpr bool operator<=(const NamedNumberType& other) const
     {
         return this->v <= other.v;
     }

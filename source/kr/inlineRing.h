@@ -69,7 +69,8 @@ class inlineRing
     {
         for (auto& it : rhs)
             this->push_back(std::move(it));
-        rhs.count = 0;
+        rhs.mFront = 0;
+        rhs.mBack = 0;
     }
 
     ~inlineRing()

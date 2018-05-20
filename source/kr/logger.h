@@ -91,10 +91,18 @@ class Logger
         std::string tempStr(NowTime());
         switch (logtype)
         {
-            case LogType::trace: tempStr += " Trace "; break;
-            case LogType::info: tempStr += " Info  "; break;
-            case LogType::warn: tempStr += " Warn  "; break;
-            case LogType::error: tempStr += " Error "; break;
+            case LogType::trace:
+                tempStr += " Trace ";
+                break;
+            case LogType::info:
+                tempStr += " Info  ";
+                break;
+            case LogType::warn:
+                tempStr += " Warn  ";
+                break;
+            case LogType::error:
+                tempStr += " Error ";
+                break;
         }
         tempStr += Buffer;
 

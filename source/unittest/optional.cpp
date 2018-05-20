@@ -48,7 +48,7 @@ struct Vec
     Vec(int _x, int _y)
         : x(_x)
         , y(_y){};
-    bool operator==(Vec& other)
+    bool operator==(const Vec& other) const
     {
         return x == other.x && y == other.y;
     };

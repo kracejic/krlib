@@ -1,0 +1,16 @@
+# Simple image with CMake, make, git and g++ 
+image: kracejic/alpinecpp
+
+stages:
+  - build
+
+
+build:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make check
+
+

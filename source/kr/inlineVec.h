@@ -67,34 +67,30 @@ class inlineVec
     }
     void push_back(T&& rhs)
     {
-        // TODO assert
-        // assert(count < max_vector_size);
         new (&data[count].val) T(std::move(rhs));
         count++;
     }
     void push_back(const T& rhs)
     {
-        // TODO assert
-        // assert(count < max_vector_size);
         new (&data[count].val) T(rhs);
         count++;
     }
     template <class... Args>
     void emplace_back(Args&&... args)
     {
-        // TODO assert
-        // assert(count < max_vector_size);
         new (&data[count].val) T((args)...);
         count++;
     }
     void pop_back()
     {
-        // TODO assert
-        // assert(count > 0);
         count--;
         data[count].val.~T();
     }
     T& operator[](std::size_t index)
+    {
+        return data[index].val;
+    }
+    const T& operator[](std::size_t index) const
     {
         return data[index].val;
     }
@@ -104,35 +100,45 @@ class inlineVec
             throw std::out_of_range{"out of range in inlineVec"};
         return data[index].val;
     }
+    const T& at(std::size_t index) const
+    {
+        if (index >= count)
+            throw std::out_of_range{"out of range in inlineVec"};
+        return data[index].val;
+    }
+    const T& front() const
+    {
+        return data[0].val;
+    }
+    const T& back() const
+    {
+        return data[count - 1].val;
+    }
     T& front()
     {
-        // TODO assert
-        // assert(count > 0);
         return data[0].val;
     }
     T& back()
     {
-        // TODO assert
-        // assert(count > 0);
         return data[count - 1].val;
     }
-    size_t max_size()
+    size_t max_size() const
     {
         return max_vector_size;
     }
-    size_t capacity()
+    size_t capacity() const
     {
         return max_vector_size;
     }
-    bool full()
+    bool full() const
     {
         return count >= max_vector_size;
     }
-    size_t size()
+    size_t size() const
     {
         return count;
     }
-    bool empty()
+    bool empty() const
     {
         return count == 0;
     }
@@ -201,6 +207,14 @@ class inlineVec
         return &data[0].val;
     }
     T* end()
+    {
+        return &data[count].val;
+    }
+    const T* begin() const
+    {
+        return &data[0].val;
+    }
+    const T* end() const
     {
         return &data[count].val;
     }

@@ -139,8 +139,20 @@ class inlineRing
     {
         return data[addr(mBack - 1)].val;
     }
+    const T& front() const
+    {
+        return data[addr(mFront)].val;
+    }
+    const T& back() const
+    {
+        return data[addr(mBack - 1)].val;
+    }
 
     T& operator[](pointerType index)
+    {
+        return data[addr(mFront + index)].val;
+    }
+    const T& operator[](pointerType index) const
     {
         return data[addr(mFront + index)].val;
     }
@@ -150,23 +162,29 @@ class inlineRing
             throw std::out_of_range{"out of range in inlineRing"};
         return data[addr(mFront + index)].val;
     }
-    pointerType max_size()
+    const T& at(pointerType index) const
+    {
+        if (index >= (mBack - mFront))
+            throw std::out_of_range{"out of range in inlineRing"};
+        return data[addr(mFront + index)].val;
+    }
+    pointerType max_size() const
     {
         return max_ring_size;
     }
-    pointerType capacity()
+    pointerType capacity() const
     {
         return max_ring_size;
     }
-    pointerType size()
+    pointerType size() const
     {
         return mBack - mFront;
     }
-    bool full()
+    bool full() const
     {
         return size() >= capacity();
     }
-    bool empty()
+    bool empty() const
     {
         return mBack == mFront;
     }

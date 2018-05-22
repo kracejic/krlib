@@ -10,7 +10,7 @@ set(SRCTEST
     jsonwritter.cpp
     explicit.cpp
     optional.cpp
-    timer.cpp
+    stopwatch.cpp
     inlineVec.cpp
     inlineRing.cpp
     jsonReader.cpp

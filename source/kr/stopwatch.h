@@ -5,11 +5,11 @@
 namespace kr
 {
 
-#define KR_TIMER_LAP(timer)                                                    \
+#define KR_STOPWATCH_LAP(timer)                                                    \
     std::cout << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << " - "   \
               << timer.lap_str() << std::endl
 
-class SpeedTimer
+class Stopwatch
 {
   private:
     std::chrono::time_point<std::chrono::high_resolution_clock> mStart;

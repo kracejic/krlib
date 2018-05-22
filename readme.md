@@ -110,14 +110,14 @@ std::string toLowerCase(std::string text)
 std::string toUpperCase(std::string text)
 ```
 
-### timer.h
+### stopwatch.h
 
-For measuring time.
+For measuring time of code execution.
 
 ```
-include "kr/timer.b"
+include "kr/stopwatch.b"
 
-kr::SpeedTimer t;
+kr::Stopwatch t;
 t.start();
 t.lap();
 cout<<t.str()<<endl;
@@ -126,7 +126,7 @@ double tim1 = t.s()l
 t.lap();
 double tim2 = t.ms()l
 cout<<t.lap_str()<<endl;
-KR_TIMER_LAP(t);
+KR_STOPWATCH_LAP(t);
 ```
 
 ### logger.h

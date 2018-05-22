@@ -1,4 +1,7 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -11,14 +14,18 @@ namespace priv
 
     struct itostr_helper
     {
-        static unsigned out[10000];
+        inline const unsigned* out()
+        {
+            static unsigned store[10000];
+            return store;
+        }
 
         itostr_helper()
         {
             for (int i = 0; i < 10000; i++)
             {
                 unsigned v = i;
-                char* o = (char*)(out + i);
+                char* o = (char*)(itostr_helper::out() + i);
                 o[3] = v % 10 + '0';
                 o[2] = (v % 100) / 10 + '0';
                 o[1] = (v % 1000) / 100 + '0';
@@ -34,34 +41,32 @@ namespace priv
             }
         }
     };
-    unsigned itostr_helper::out[10000];
+    // unsigned itostr_helper::out[10000];
 
-    itostr_helper hlp_init;
+    static itostr_helper hlp_init;
 } /* private */
 
 template <typename T>
 std::string itostr(T o)
 {
-    typedef priv::itostr_helper hlp;
-
     unsigned blocks[3], *b = blocks + 2;
     blocks[0] = o < 0 ? ~o + 1 : o;
     blocks[2] = blocks[0] % 10000;
     blocks[0] /= 10000;
-    blocks[2] = hlp::out[blocks[2]];
+    blocks[2] = priv::hlp_init.out()[blocks[2]];
 
     if (blocks[0])
     {
         blocks[1] = blocks[0] % 10000;
         blocks[0] /= 10000;
-        blocks[1] = hlp::out[blocks[1]];
+        blocks[1] = priv::hlp_init.out()[blocks[1]];
         blocks[2] |= 0x30303030;
         b--;
     }
 
     if (blocks[0])
     {
-        blocks[0] = hlp::out[blocks[0] % 10000];
+        blocks[0] = priv::hlp_init.out()[blocks[0] % 10000];
         blocks[1] |= 0x30303030;
         b--;
     }
@@ -75,7 +80,7 @@ std::string itostr(T o)
     return std::string(f, (str + 12) - f);
 }
 
-std::string human_readable(int64_t size)
+inline std::string human_readable(int64_t size)
 {
     if (size < 1024L * 10L)
         return itostr(size);
@@ -91,7 +96,7 @@ std::string human_readable(int64_t size)
 /**
  * @return true if text starts with substring
  */
-bool starts_with(const std::string& text, const std::string& substring)
+inline bool starts_with(const std::string& text, const std::string& substring)
 {
     if (substring.size() > text.size())
         return false;
@@ -101,7 +106,7 @@ bool starts_with(const std::string& text, const std::string& substring)
 /**
  * @return true if text ends with substring
  */
-bool ends_with(const std::string& text, const std::string& substring)
+inline bool ends_with(const std::string& text, const std::string& substring)
 {
     if (substring.size() > text.size())
         return false;
@@ -112,7 +117,7 @@ bool ends_with(const std::string& text, const std::string& substring)
 /**
  * modify string by triming whitespace
  */
-void trim(std::string& text, bool left = true, bool right = true)
+inline void trim(std::string& text, bool left = true, bool right = true)
 {
     if (right)
         text.erase(text.find_last_not_of(priv::delims) + 1);
@@ -123,7 +128,8 @@ void trim(std::string& text, bool left = true, bool right = true)
 /**
  * @return trimmed string
  */
-std::string trimmed(std::string text, bool left = true, bool right = true)
+inline std::string trimmed(
+    std::string text, bool left = true, bool right = true)
 {
     if (right)
         text.erase(text.find_last_not_of(priv::delims) + 1);
@@ -140,7 +146,7 @@ std::string trimmed(std::string text, bool left = true, bool right = true)
  *                  number of results is maxSplits+1
  * @return vector of strings
  */
-std::vector<std::string> split(const std::string& text,
+inline std::vector<std::string> split(const std::string& text,
     const std::string& delimiters = "\t\n ", int maxSplits = 0)
 {
     std::vector<std::string> result;
@@ -180,25 +186,59 @@ std::vector<std::string> split(const std::string& text,
     return result;
 }
 
-void transformToLowerCase(std::string& text)
+inline void transformToLowerCase(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), tolower);
 }
 
-void transformToUpperCase(std::string& text)
+inline void transformToUpperCase(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), toupper);
 }
 
-std::string toLowerCase(std::string text)
+inline std::string toLowerCase(std::string text)
 {
     std::transform(text.begin(), text.end(), text.begin(), tolower);
     return text;
 }
 
-std::string toUpperCase(std::string text)
+inline std::string toUpperCase(std::string text)
 {
     std::transform(text.begin(), text.end(), text.begin(), toupper);
     return text;
 }
+
+inline std::string lpad(std::string text, size_t target_width, char fill = ' ')
+{
+    if (text.size() < target_width)
+        text.insert(0, target_width - text.size(), fill);
+    return text;
+}
+inline void lpadTransform(
+    std::string& text, size_t target_width, char fill = ' ')
+{
+    if (text.size() < target_width)
+        text.insert(0, target_width - text.size(), fill);
+}
+inline std::string rpad(std::string text, size_t target_width, char fill = ' ')
+{
+    if (text.size() < target_width)
+        text.append(target_width - text.size(), fill);
+    return text;
+}
+inline void rpadTransform(
+    std::string& text, size_t target_width, char fill = ' ')
+{
+    if (text.size() < target_width)
+        text.append(target_width - text.size(), fill);
+}
+
+template <class T, size_t buffsize = 32>
+inline std::string format(const char* format, T num)
+{
+    static char buff[buffsize];
+    snprintf(buff, buffsize, format, num);
+    return {buff};
+}
+
 } /* kr */

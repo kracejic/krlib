@@ -1,13 +1,15 @@
 #pragma once
 #include <chrono>
+#include <memory>
 #include <string>
 
 namespace kr
 {
 
-#define KR_STOPWATCH_LAP(timer)                                                    \
+#define KR_STOPWATCH_LAP(timer)                                                \
     std::cout << __FILE__ << ":" << __FUNCTION__ << ":" << __LINE__ << " - "   \
               << timer.lap_str() << std::endl
+
 
 class Stopwatch
 {
@@ -16,6 +18,15 @@ class Stopwatch
     std::chrono::duration<double, std::ratio<1, 1000>> mDuration;
 
   public:
+    /// helper global singleton instance
+    static Stopwatch& global()
+    {
+        thread_local static std::unique_ptr<Stopwatch> instance;
+        if (not instance)
+            instance.reset(new Stopwatch());
+        return *instance;
+    };
+
     /// marks start of the timer
     void start()
     {

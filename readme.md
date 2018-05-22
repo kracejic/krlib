@@ -108,6 +108,11 @@ void transformToLowerCase(std::string& text)
 void transformToUpperCase(std::string& text)
 std::string toLowerCase(std::string text)
 std::string toUpperCase(std::string text)
+std::string lpad(std::string text, size_t target_width, char fill = ' ')
+void lpadTransform(std::string& text, size_t target_width, char fill = ' ')
+std::string rpad(std::string text, size_t target_width, char fill = ' ')
+void rpadTransform(std::string& text, size_t target_width, char fill = ' ')
+std::string format(const char* format, T num)
 ```
 
 ### stopwatch.h
@@ -127,6 +132,22 @@ t.lap();
 double tim2 = t.ms()l
 cout<<t.lap_str()<<endl;
 KR_STOPWATCH_LAP(t);
+```
+### multistopwatch.h
+
+For measuring time of code execution.
+
+```
+include "kr/stopwatch.b"
+
+kr::MultiStopwatch t;
+t.start("first operation");
+t.lap("second operation");
+t.lap("third operation");
+t.finalize();
+
+for (auto &op : t.results())
+    cout << op << endl;
 ```
 
 ### logger.h

@@ -92,3 +92,57 @@ TEST_CASE("lower/upper case")
     kr::transformToUpperCase(a);
     REQUIRE(a == "TEST");
 }
+
+TEST_CASE("lpads")
+{
+    REQUIRE(kr::lpad("a", 3) == "  a");
+    REQUIRE(kr::lpad("a", 1) == "a");
+    REQUIRE(kr::lpad("aa", 1) == "aa");
+    REQUIRE(kr::lpad("aa", 0) == "aa");
+    REQUIRE(kr::lpad("a", 0) == "a");
+    REQUIRE(kr::lpad("", 0) == "");
+    REQUIRE(kr::lpad("", 4) == "    ");
+    REQUIRE(kr::lpad("", 4, '0') == "0000");
+    REQUIRE(kr::lpad("axx", 4, '0') == "0axx");
+
+    std::string text = "xx";
+    kr::lpadTransform(text, 3);
+    REQUIRE(text == " xx");
+}
+
+TEST_CASE("rpads")
+{
+    REQUIRE(kr::rpad("a", 3) == "a  ");
+    REQUIRE(kr::rpad("a", 1) == "a");
+    REQUIRE(kr::rpad("aa", 1) == "aa");
+    REQUIRE(kr::rpad("aa", 0) == "aa");
+    REQUIRE(kr::rpad("a", 0) == "a");
+    REQUIRE(kr::rpad("", 0) == "");
+    REQUIRE(kr::rpad("", 4) == "    ");
+    REQUIRE(kr::rpad("", 10) == "          ");
+    REQUIRE(kr::rpad("first", 8) == "first   ");
+    REQUIRE(kr::rpad("first", 9) == "first    ");
+    REQUIRE(kr::rpad("first", 10) == "first     ");
+    REQUIRE(kr::rpad("first", 11) == "first      ");
+    REQUIRE(kr::rpad("first", 12) == "first       ");
+    REQUIRE(kr::rpad("", 4, '0') == "0000");
+    REQUIRE(kr::rpad("axx", 4, '0') == "axx0");
+
+
+    std::string text1 = "first";
+    REQUIRE(kr::rpad(text1, 10) == "first     ");
+
+    std::string text = "xx";
+    kr::rpadTransform(text, 3);
+    REQUIRE(text == "xx ");
+}
+
+TEST_CASE("format")
+{
+    REQUIRE(kr::format("%0.3lf", 0.3) == "0.300");
+    REQUIRE(kr::format("%0.3lf", 0.3333) == "0.333");
+    REQUIRE(kr::format("%0.3f", 0.3333f) == "0.333");
+    REQUIRE(kr::format("%6d", 156) == "   156");
+    REQUIRE(kr::format("%06d", 156) == "000156");
+    REQUIRE(kr::format("%2d", 156) == "156");
+}

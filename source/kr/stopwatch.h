@@ -18,7 +18,7 @@ class Stopwatch
     std::chrono::duration<double, std::ratio<1, 1000>> mDuration;
 
   public:
-    /// helper global singleton instance
+    /// Helper global singleton instance. Can be still used without it.
     static Stopwatch& global()
     {
         thread_local static std::unique_ptr<Stopwatch> instance;
@@ -27,28 +27,29 @@ class Stopwatch
         return *instance;
     };
 
-    /// marks start of the timer
+    /// Marks start of the timer.
     void start()
     {
         mStart = std::chrono::high_resolution_clock::now();
     };
 
-    /// calculates duration from start and restarts the counter
-    void lap()
+    /// Calculates duration from start and restarts the counter, returns ms.
+    double lap()
     {
         auto end = std::chrono::high_resolution_clock::now();
         mDuration = std::chrono::duration_cast<
             std::chrono::duration<double, std::ratio<1, 1000>>>(end - mStart);
         mStart = end;
+        return mDuration.count();
     };
 
-    /// string value of last duration "10ms"
+    /// String value of last duration "10ms".
     std::string str() const
     {
         return std::to_string(ms()) + "ms";
     };
 
-    /// returns time in seconds
+    /// Returns time in seconds.
     double s() const
     {
         return std::chrono::duration_cast<
@@ -56,7 +57,7 @@ class Stopwatch
             .count();
     };
 
-    /// returns time in miliseconds
+    /// Returns time in miliseconds.
     double ms() const
     {
         return std::chrono::duration_cast<
@@ -64,7 +65,7 @@ class Stopwatch
             .count();
     };
 
-    /// start new lap and returns time of the last one as string (format: 10ms)
+    /// Start new lap and returns time of the last one as string (format: 10ms).
     std::string lap_str()
     {
         lap();

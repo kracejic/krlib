@@ -16,7 +16,12 @@ namespace kr
 class MultiStopwatch
 {
   public:
-    /// Helper global singleton instance.
+    MultiStopwatch()
+    {
+        // Prevent allocation in regular usage cases.
+        watches.reserve(32);
+    }
+    /// Helper global singleton instance. Can be still used without it.
     static MultiStopwatch& global()
     {
         thread_local static std::unique_ptr<MultiStopwatch> instance;
@@ -34,17 +39,24 @@ class MultiStopwatch
         watches.emplace_back(name, 0, 0);
     }
 
-    /// Trigger start of new segment.
+    /// Trigger start of new segment. Can be used instead of start.
     void lap(const std::string& name)
     {
-        auto end = std::chrono::high_resolution_clock::now();
-        double duration_ms = std::chrono::duration_cast<
-            std::chrono::duration<double, std::ratio<1, 1000>>>(
-            end - mCurLapStart)
-                                 .count();
+        using namespace std::chrono;
+        auto now = high_resolution_clock::now();
 
-        mCurLapStart = std::chrono::high_resolution_clock::now();
-        watches.back().duration_ms = duration_ms;
+        if (not watches.empty())
+        {
+            watches.back().duration_ms =
+                duration_cast<duration<double, std::ratio<1, 1000>>>(
+                    now - mCurLapStart)
+                    .count();
+        }
+        else
+        {
+            mStart = now;
+        }
+        mCurLapStart = now;
         watches.emplace_back(name, 0, 0);
     }
 
@@ -76,17 +88,18 @@ class MultiStopwatch
     /// times.
     const std::vector<NamedWatch>& finalize()
     {
-        auto end = std::chrono::high_resolution_clock::now();
+        using namespace std::chrono;
+        auto end = high_resolution_clock::now();
 
-        double duration_ms = std::chrono::duration_cast<
-            std::chrono::duration<double, std::ratio<1, 1000>>>(
-            end - mCurLapStart)
-                                 .count();
+        double duration_ms =
+            duration_cast<duration<double, std::ratio<1, 1000>>>(
+                end - mCurLapStart)
+                .count();
         watches.back().duration_ms = duration_ms;
 
-        mWholeDuration_ms = std::chrono::duration_cast<
-            std::chrono::duration<double, std::ratio<1, 1000>>>(end - mStart)
-                                .count();
+        mWholeDuration_ms =
+            duration_cast<duration<double, std::ratio<1, 1000>>>(end - mStart)
+                .count();
 
         for (auto& watch : watches)
         {

@@ -27,7 +27,7 @@ TEST_CASE("Stopwatch")
 TEST_CASE("MultiStopwatch")
 {
     kr::MultiStopwatch t;
-    t.start("first");
+    t.clearAndLap("first");
     std::this_thread::sleep_for(20ms);
     t.lap("second");
     std::this_thread::sleep_for(10ms);
@@ -47,4 +47,16 @@ TEST_CASE("MultiStopwatch")
     {
         std::cout << i.str() << std::endl;
     }
+    t.lap("test");
+    REQUIRE(t.results().size() == 1);
+    t.clearAndLap("test");
+    REQUIRE(t.results().size() == 1);
+    t.finalize();
+    REQUIRE(t.results().size() == 2);
+    t.clearAndLap("test");
+    REQUIRE(t.results().size() == 1);
+    t.lap("test");
+    REQUIRE(t.results().size() == 2);
+    t.finalize();
+    REQUIRE(t.results().size() == 3);
 }

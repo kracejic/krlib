@@ -141,13 +141,13 @@ For measuring time of code execution.
 include "kr/stopwatch.b"
 
 kr::MultiStopwatch t;
-t.start("first operation");
+t.clearAndLap("first operation");
 t.lap("second operation");
 t.lap("third operation");
 t.finalize();
 
 for (auto &op : t.results())
-    cout << op << endl;
+    cout << op.str() << endl;
 ```
 
 ### logger.h

@@ -21,6 +21,7 @@ class MultiStopwatch
         // Prevent allocation in regular usage cases.
         watches.reserve(32);
     }
+
     /// Helper global singleton instance. Can be still used without it.
     static MultiStopwatch& global()
     {
@@ -31,12 +32,20 @@ class MultiStopwatch
     };
 
     /// Start/reset the MultiStopwatch, start segment.
-    void start(const std::string& name)
+    void clearAndLap(const std::string& name)
     {
         mStart = std::chrono::high_resolution_clock::now();
         mCurLapStart = mStart;
         watches.clear();
         watches.emplace_back(name, 0, 0);
+        reset = false;
+    }
+
+    /// Resets the MultiStopwatch.
+    void clear()
+    {
+        watches.clear();
+        reset = true;
     }
 
     /// Trigger start of new segment. Can be used instead of start.
@@ -45,7 +54,7 @@ class MultiStopwatch
         using namespace std::chrono;
         auto now = high_resolution_clock::now();
 
-        if (not watches.empty())
+        if (not reset)
         {
             watches.back().duration_ms =
                 duration_cast<duration<double, std::ratio<1, 1000>>>(
@@ -54,6 +63,8 @@ class MultiStopwatch
         }
         else
         {
+            reset = false;
+            watches.clear();
             mStart = now;
         }
         mCurLapStart = now;
@@ -106,6 +117,7 @@ class MultiStopwatch
             watch.percentage = 100 * (watch.duration_ms / mWholeDuration_ms);
         }
         watches.emplace_back("@ALL", mWholeDuration_ms, 100.0f);
+        reset = true;
         return watches;
     }
 
@@ -121,5 +133,6 @@ class MultiStopwatch
 
     double mWholeDuration_ms;
     std::vector<NamedWatch> watches;
+    bool reset = true;
 };
 } /* kr */

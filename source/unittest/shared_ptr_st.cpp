@@ -17,9 +17,9 @@ TEST_CASE("shared_ptr_st")
         REQUIRE(
             kr::CanaryObject::states[1] == kr::CanaryObject::State::construct2);
         REQUIRE(ptr.use_count() == 1);
-        REQUIRE((*ptr).id == 1);
+        REQUIRE((*ptr)._id == 1);
         REQUIRE((*ptr).val == 2);
-        REQUIRE(ptr->id == 1);
+        REQUIRE(ptr->_id == 1);
         REQUIRE(ptr->val == 2);
     }
     REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::destruct);

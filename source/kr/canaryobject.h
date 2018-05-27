@@ -17,62 +17,62 @@ class CanaryObject
         if (state == State::destruct)
             throw std::runtime_error("State::destruct");
     }
-    int id = 0;
+    int _id = 0;
     int val = 0;
     CanaryObject()
     {
         state = State::construct1;
-        states[id] = State::construct1;
+        states[_id] = State::construct1;
     }
     CanaryObject(int i)
     {
         state = State::construct2;
-        states[id] = State::construct2;
+        states[_id] = State::construct2;
         val = i;
     }
     CanaryObject(int i, int canaryIndex)
     {
-        id = canaryIndex;
+        _id = canaryIndex;
         state = State::construct2;
-        states[id] = State::construct2;
+        states[_id] = State::construct2;
         val = i;
     }
     CanaryObject(const CanaryObject& p)
     {
         p.throwIfInvalid();
-        id = p.id;
+        _id = p._id;
         state = State::copyConst;
-        states[id] = State::copyConst;
+        states[_id] = State::copyConst;
     };
     CanaryObject& operator=(const CanaryObject& p)
     {
         p.throwIfInvalid();
-        id = p.id;
+        _id = p._id;
         state = State::copyAssign;
-        states[id] = State::copyAssign;
+        states[_id] = State::copyAssign;
         return *this;
     };
     CanaryObject(CanaryObject&& p)
     {
         p.throwIfInvalid();
-        id = p.id;
-        p.id = 255;
+        _id = p._id;
+        p._id = 255;
         val = p.val;
         p.val = 255;
         p.state = State::movedFrom;
         state = State::moveConst;
-        states[id] = State::moveConst;
+        states[_id] = State::moveConst;
     };
     CanaryObject& operator=(CanaryObject&& p)
     {
         p.throwIfInvalid();
-        id = p.id;
-        p.id = 255;
+        _id = p._id;
+        p._id = 255;
         val = p.val;
         p.val = 255;
         p.state = State::movedFrom;
         state = State::moveAssign;
-        states[id] = State::moveAssign;
+        states[_id] = State::moveAssign;
         return *this;
     };
     enum class State
@@ -90,7 +90,7 @@ class CanaryObject
     ~CanaryObject()
     {
         state = State::destruct;
-        states[id] = State::destruct;
+        states[_id] = State::destruct;
     }
 
     State state;

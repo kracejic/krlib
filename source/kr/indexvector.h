@@ -106,7 +106,7 @@ class indexvector
     }
     indexvector& operator=(const indexvector& rhs)
     {
-        //cleanup
+        // cleanup
         for (auto& i : *this)
             i.~V();
         used = 0;
@@ -196,10 +196,12 @@ class indexvector
             for (K i = 0; i < used; ++i)
                 new (&data[i].val) V(std::move(olddata[i].val));
 
+            // TODO this also does not work, we need to keep back at back, or
+            // keep this private .
             // Copy the indexes
-            for (auto it = (index + used); it != (index + newsize); ++it)
+            for (auto it = (index + allocated); it != (index + newsize); ++it)
                 *it = -1;
-            std::copy(&oldindex[0], &oldindex[used], &index[0]);
+            std::copy(&oldindex[0], &oldindex[allocated], &index[0]);
 
             // Clean
             delete[] oldindex;
@@ -288,6 +290,7 @@ class indexvector
         auto pos = index[key];
         index[key] = -1; // mark index unused
 
+        // TODO this does not work... This rewrites the index of old ones
         // add to free indexes stack
         index[allocated - (1 + freeIndexes)] = pos;
         freeIndexes++;

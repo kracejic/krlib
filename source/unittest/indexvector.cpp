@@ -146,10 +146,49 @@ TEST_CASE("indexvector with Canary")
 
 TEST_CASE("indexvector stressing")
 {
+    using State = CanaryObject::State;
+    CanaryObject::initStates();
+
     indexvector<int, CanaryID> v;
+    v.reserve(64);
+
+    for (int i = 0; i < 128; ++i)
+        v.emplace_back(i);
+
+    for (int i = 0; i < 64; ++i)
+        REQUIRE(v[i].state == State::moveConst);
+
+    for (int i = 64; i < 128; ++i)
+        REQUIRE(v[i].state == State::construct2);
+
+    // Destruction
+    v.clear();
+    REQUIRE(v.size() == 0);
+    for (int i = 0; i < 128; ++i)
+        REQUIRE(CanaryObject::states[i] == State::destruct);
+
+    // reinsert them back
+    for (int i = 0; i < 128; ++i)
+        v.emplace_back(i);
+
+    // Now all will be freshly constructed
+    for (int i = 0; i < 128; ++i)
+        REQUIRE(v[i].state == State::construct2);
+
+    REQUIRE(v.capacity() == 128);
+    REQUIRE(v.size() == 128);
 
 
-    REQUIRE(true);
+    // Delete all of them
+    for (int i = 0; i < 128; ++i)
+    {
+        v.erase(i);
+    }
+
+    for (int i = 0; i < 128; ++i)
+    {
+        v.push_back({i});
+    }
 }
 
 // TODO performance tests

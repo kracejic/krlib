@@ -19,19 +19,16 @@ class shared_ptr_st
         , count(nullptr){};
     shared_ptr_st(T* target)
         : ptr(target)
-        , count(nullptr){};
+    {
+        count = new unsigned(1);
+    };
     shared_ptr_st(const shared_ptr_st& rhs)
         : ptr(rhs.ptr)
         , count(rhs.count)
     {
         if (!ptr)
             return;
-        if (!count)
-        {
-            count = rhs.count = new unsigned(2);
-        }
-        else
-            ++(*count);
+        ++(*count);
     };
     shared_ptr_st(shared_ptr_st&& rhs)
         : ptr(rhs.ptr)
@@ -47,14 +44,7 @@ class shared_ptr_st
         count = rhs.count;
         if (!ptr)
             return *this;
-        if (!count)
-        {
-            count = rhs.count = new unsigned(2);
-        }
-        else
-        {
-            ++(*count);
-        }
+        ++(*count);
         return *this;
     };
     shared_ptr_st<T>& operator=(shared_ptr_st&& rhs)
@@ -68,9 +58,20 @@ class shared_ptr_st
         rhs.count = nullptr;
         return *this;
     };
+    shared_ptr_st<T>& operator=(T* rhs)
+    {
+        reset();
+        if (rhs == nullptr)
+            return *this;
+        ptr = rhs;
+        count = new unsigned(1);
+        return *this;
+    };
 
     void reset()
     {
+        if (ptr == nullptr)
+            return;
         if (!count)
         {
             delete ptr;
@@ -113,12 +114,7 @@ class shared_ptr_st
     unsigned use_count() const
     {
         if (ptr)
-        {
-            if (count == nullptr)
-                return 1;
-            else
-                return *count;
-        }
+            return *count;
         else
             return 0;
     }

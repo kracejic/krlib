@@ -87,6 +87,24 @@ class CanaryObject
         movedFrom,  // 7
         destruct    // 8
     };
+    bool isValid()
+    {
+        switch (state)
+        {
+            default:
+                return false;
+            case State::construct1:
+            case State::construct2:
+            case State::copyConst:
+            case State::copyAssign:
+            case State::moveConst:
+            case State::moveAssign:
+                break;
+        }
+        if (_id < 0 || _id > 256)
+            return false;
+        return true;
+    }
     ~CanaryObject()
     {
         state = State::destruct;

@@ -64,7 +64,7 @@ class indexvector
 
         if (freeIndexes > 0)
         {
-            K firstFree = index[allocated - freeIndexes];
+            K firstFree = index[allocated * 2 - freeIndexes];
             --freeIndexes;
             return firstFree;
         }
@@ -120,6 +120,7 @@ class indexvector
         for (K i = 0; i < used; ++i)
             new (&data[i].val) V((rhs.data[i].val));
         std::copy(rhs.begin(), rhs.end(), begin());
+        std::copy(rhs.index, rhs.index + 2 * rhs.allocated, index);
 
         // copy other values
         used = rhs.used;
@@ -167,7 +168,7 @@ class indexvector
             i.~V();
         used = 0;
         freeIndexes = 0;
-        for (auto it = index; it != (index + allocated); ++it)
+        for (auto it = index; it != (index + allocated * 2); ++it)
             *it = -1;
     }
 
@@ -189,19 +190,24 @@ class indexvector
             // Allocate new space
             auto oldindex = index;
             auto olddata = data;
-            index = new K[newsize];
+            index = new K[newsize * 2];
             data = new Storage_t[newsize];
 
             // move the data
             for (K i = 0; i < used; ++i)
                 new (&data[i].val) V(std::move(olddata[i].val));
 
-            // TODO this also does not work, we need to keep back at back, or
-            // keep this private .
-            // Copy the indexes
-            for (auto it = (index + allocated); it != (index + newsize); ++it)
+            // Clean indexes
+            for (auto it = (index + allocated);
+                 it != (index + newsize * 2 - freeIndexes); ++it)
+            {
                 *it = -1;
+            }
+            // Copy used part
             std::copy(&oldindex[0], &oldindex[allocated], &index[0]);
+            // Copy free part
+            std::copy(&oldindex[2 * allocated - freeIndexes],
+                &oldindex[2 * allocated], &index[newsize * 2 - freeIndexes]);
 
             // Clean
             delete[] oldindex;
@@ -213,9 +219,9 @@ class indexvector
         {
             if (newsize <= 0)
                 newsize = 32;
-            index = new K[newsize];
+            index = new K[newsize * 2];
             data = new Storage_t[newsize];
-            for (auto it = index; it != (index + newsize); ++it)
+            for (auto it = index; it != (index + newsize * 2); ++it)
                 *it = -1;
             allocated = newsize;
         }
@@ -265,7 +271,7 @@ class indexvector
     /// Throws exception when object does not exists
     V& at(K key)
     {
-        if (key < 0 || key >= (allocated - freeIndexes) || index[key] == -1)
+        if (key < 0 || key >= allocated || index[key] == -1)
             throw std::out_of_range{"out of range in inlineVec"};
         return data[index[key]].val;
     }
@@ -273,7 +279,7 @@ class indexvector
     /// Throws exception when object does not exists
     const V& at(K key) const
     {
-        if (key < 0 || key >= (allocated - freeIndexes) || index[key] == -1)
+        if (key < 0 || key >= allocated || index[key] == -1)
             throw std::out_of_range{"out of range in inlineVec"};
         return data[index[key]].val;
     }
@@ -281,8 +287,7 @@ class indexvector
     /// Throws exception when object does not exists
     bool has(K key) const
     {
-        return not(
-            key < 0 || key >= (allocated - freeIndexes) || index[key] == -1);
+        return not(key < 0 || key >= allocated || index[key] == -1);
     }
 
     void erase(K key)
@@ -290,10 +295,9 @@ class indexvector
         auto pos = index[key];
         index[key] = -1; // mark index unused
 
-        // TODO this does not work... This rewrites the index of old ones
         // add to free indexes stack
-        index[allocated - (1 + freeIndexes)] = pos;
         freeIndexes++;
+        index[2 * allocated - freeIndexes] = key;
 
         // Delete object
         used--;

@@ -155,6 +155,9 @@ TEST_CASE("indexvector stressing")
     for (int i = 0; i < 128; ++i)
         v.emplace_back(i);
 
+    for (int i = 0; i < 128; ++i)
+        REQUIRE(v[i].isValid() == true);
+
     for (int i = 0; i < 64; ++i)
         REQUIRE(v[i].state == State::moveConst);
 
@@ -171,6 +174,11 @@ TEST_CASE("indexvector stressing")
     for (int i = 0; i < 128; ++i)
         v.emplace_back(i);
 
+    for (int i = 0; i < 128; ++i)
+        REQUIRE(v[i].isValid() == true);
+    for (auto i : v)
+        REQUIRE(i.isValid() == true);
+
     // Now all will be freshly constructed
     for (int i = 0; i < 128; ++i)
         REQUIRE(v[i].state == State::construct2);
@@ -185,10 +193,30 @@ TEST_CASE("indexvector stressing")
         v.erase(i);
     }
 
+    REQUIRE(v.capacity() == 128);
+    REQUIRE(v.size() == 0);
+
     for (int i = 0; i < 128; ++i)
+    {
+        REQUIRE(v.push_back({i}).id != -1);
+    }
+
+    for (int i = 0; i < 128; ++i)
+        REQUIRE(v[i].isValid() == true);
+    for (auto i : v)
+        REQUIRE(i.isValid() == true);
+
+    // Delete all of them
+    for (int i = 0; i < 128; ++i)
+    {
+        v.erase(i);
+    }
+
+    for (int i = 0; i < 135; ++i)
     {
         v.push_back({i});
     }
+
 }
 
 // TODO performance tests

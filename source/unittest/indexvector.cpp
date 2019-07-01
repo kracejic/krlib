@@ -1,6 +1,6 @@
+#include "kr/indexvector.h"
 #include "catch.hpp"
 #include "kr/canaryobject.h"
-#include "kr/indexvector.h"
 #include <cstring>
 
 #include <string>
@@ -11,10 +11,10 @@ using namespace kr;
 struct data
 {
     int id;
-    std::string text{"xx"};
+    std::string text {"xx"};
 
     data(const std::string& _text)
-        : text(_text){};
+        : text(_text) {};
 };
 
 TEST_CASE("indexvector basic int")
@@ -81,9 +81,9 @@ class CanaryID : public CanaryObject
 {
   public:
     CanaryID(int canary_id)
-        : CanaryObject(0, canary_id){};
+        : CanaryObject(0, canary_id) {};
     int id;
-    string data{""};
+    string data {""};
 };
 
 TEST_CASE("indexvector with Canary")
@@ -216,7 +216,6 @@ TEST_CASE("indexvector stressing")
     {
         v.push_back({i});
     }
-
 }
 
 // TODO performance tests

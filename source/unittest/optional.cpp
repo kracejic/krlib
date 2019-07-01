@@ -47,7 +47,7 @@ struct Vec
     int x, y;
     Vec(int _x, int _y)
         : x(_x)
-        , y(_y){};
+        , y(_y) {};
     bool operator==(const Vec& other) const
     {
         return x == other.x && y == other.y;
@@ -66,7 +66,7 @@ TEST_CASE("")
 {
     Vec x(1, 2);
     kr::optional<Vec> empty;
-    kr::optional<Vec> val{1, 2};
+    kr::optional<Vec> val {1, 2};
 
     REQUIRE(!empty);
     REQUIRE(!!val);

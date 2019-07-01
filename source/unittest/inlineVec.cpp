@@ -57,7 +57,7 @@ struct Test
     Test() = default;
     Test(int _a, unsigned char _x)
         : a(_a)
-        , x(_x){};
+        , x(_x) {};
 };
 TEST_CASE("inlineVec struct")
 {
@@ -93,7 +93,7 @@ TEST_CASE("inlineVec canary")
     t.pop_back();
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::destruct);
 
-    kr::CanaryObject c{0, 1};
+    kr::CanaryObject c {0, 1};
     REQUIRE(c.state == kr::CanaryObject::State::construct2);
     REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::construct2);
     t.push_back(std::move(c));

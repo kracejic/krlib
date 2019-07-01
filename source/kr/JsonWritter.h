@@ -23,10 +23,10 @@ namespace Json
             }
 
           public:
-            BaseWritter(){};
+            BaseWritter() {};
 
             BaseWritter(std::string& _target)
-                : target(_target){};
+                : target(_target) {};
             BaseWritter(std::string& _target, size_t size)
                 : target(_target)
             {
@@ -213,7 +213,7 @@ namespace Json
     {
       public:
         WritterTo(std::string& _target)
-            : BaseWritter(_target){};
+            : BaseWritter(_target) {};
         WritterTo(std::string& _target, size_t size)
             : BaseWritter(_target)
         {

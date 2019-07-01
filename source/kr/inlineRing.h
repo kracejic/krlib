@@ -17,13 +17,13 @@ namespace _inlineRing_detail
         T val;
 
         constexpr storage_t() noexcept
-            : dummy_(){};
+            : dummy_() {};
 
         constexpr storage_t(T& other)
-            : val(other){};
+            : val(other) {};
 
         constexpr storage_t(T&& other)
-            : val(other){};
+            : val(other) {};
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
@@ -31,7 +31,7 @@ namespace _inlineRing_detail
         {
         }
 
-        ~storage_t(){};
+        ~storage_t() {};
     };
 
     constexpr bool is_powerof2(int v)
@@ -46,8 +46,8 @@ template <class T, int max_ring_size, typename pointerType>
 class inlineRing
 {
   private:
-    pointerType mFront{0};
-    pointerType mBack{0};
+    pointerType mFront {0};
+    pointerType mBack {0};
     _inlineRing_detail::storage_t<T> data[max_ring_size];
 
     pointerType addr(pointerType index)
@@ -159,13 +159,13 @@ class inlineRing
     T& at(pointerType index)
     {
         if (index >= (mBack - mFront))
-            throw std::out_of_range{"out of range in inlineRing"};
+            throw std::out_of_range {"out of range in inlineRing"};
         return data[addr(mFront + index)].val;
     }
     const T& at(pointerType index) const
     {
         if (index >= (mBack - mFront))
-            throw std::out_of_range{"out of range in inlineRing"};
+            throw std::out_of_range {"out of range in inlineRing"};
         return data[addr(mFront + index)].val;
     }
     pointerType max_size() const
@@ -215,7 +215,7 @@ class inlineRing
         iterator(inlineRing<T, max_ring_size, pointerType>& _parent,
             pointerType _pos)
             : parent(_parent)
-            , pos(_pos){};
+            , pos(_pos) {};
         iterator& operator--()
         {
             pos--;

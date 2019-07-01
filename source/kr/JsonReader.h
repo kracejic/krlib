@@ -30,28 +30,28 @@ namespace Json
           public:
             TreeNode(Type _type, char* start)
                 : type(_type)
-                , text_start(start){};
+                , text_start(start) {};
             TreeNode(Type _type, char* start, char* end)
                 : type(_type)
                 , text_start(start)
-                , text_end(end){};
-            Type type{Type::null};
-            uint32_t size{1};
+                , text_end(end) {};
+            Type type {Type::null};
+            uint32_t size {1};
             // indexes ins
-            char* text_start{0};
-            char* text_end{0};
+            char* text_start {0};
+            char* text_end {0};
         };
     }
 
     class Value
     {
       protected:
-        _detail::TreeNode* me{nullptr};
+        _detail::TreeNode* me {nullptr};
 
       public:
-        Value(){};
+        Value() {};
         Value(_detail::TreeNode* _it)
-            : me(_it){};
+            : me(_it) {};
         Value& operator++()
         {
             me = me + me->size;
@@ -237,7 +237,7 @@ namespace Json
         void throwIfInvalid() const
         {
             if (me == nullptr)
-                throw std::runtime_error{"Element is not in here."};
+                throw std::runtime_error {"Element is not in here."};
         }
 
         // clang-format off
@@ -374,10 +374,10 @@ namespace Json
                         break;
                     case ']':
                         if (st.empty())
-                            throw std::runtime_error{
+                            throw std::runtime_error {
                                 "invalid json array closing"};
                         if (tree[st.back()].type != _detail::Type::array)
-                            throw std::runtime_error{
+                            throw std::runtime_error {
                                 "invalid json array closing"};
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
@@ -389,7 +389,7 @@ namespace Json
                         break;
                     case '}':
                         if (st.empty())
-                            throw std::runtime_error{
+                            throw std::runtime_error {
                                 "invalid json object closing"};
 
                         if (tree[st.back()].type == _detail::Type::keyval)
@@ -399,7 +399,7 @@ namespace Json
                             st.pop_back();
                         }
                         if (tree[st.back()].type != _detail::Type::object)
-                            throw std::runtime_error{
+                            throw std::runtime_error {
                                 "invalid json object closing"};
                         tree[st.back()].text_end = &text[i + 1];
                         tree[st.back()].size = tree.size() - st.back();
@@ -422,7 +422,7 @@ namespace Json
         }
 
       public:
-        Reader(){};
+        Reader() {};
 
         Reader(std::string&& input)
             : text(input)

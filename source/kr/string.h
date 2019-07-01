@@ -165,7 +165,7 @@ inline std::vector<std::string> split(const std::string& text,
             numSplits--; // first split does not count
         }
         else if (pos == std::string::npos ||
-            (maxSplits && numSplits == maxSplits))
+                 (maxSplits && numSplits == maxSplits))
         {
             // Copy the rest of the string
             result.emplace_back(text.substr(start));

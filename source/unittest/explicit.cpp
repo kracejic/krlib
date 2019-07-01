@@ -36,29 +36,29 @@ TEST_CASE("explicit2")
 using Distance = kr::NamedNumberType<int, struct DistanceTag>;
 TEST_CASE("explicit numbered")
 {
-    Distance x{5};
-    REQUIRE(x == Distance{5});
+    Distance x {5};
+    REQUIRE(x == Distance {5});
 
-    REQUIRE(x + Distance{3} == Distance{8});
-    x += Distance{2};
-    REQUIRE(x == Distance{7});
+    REQUIRE(x + Distance {3} == Distance {8});
+    x += Distance {2};
+    REQUIRE(x == Distance {7});
     REQUIRE(to_string(x) == "7");
 
-    REQUIRE(x - Distance{5} == Distance{2});
-    x -= Distance{2};
-    REQUIRE(x == Distance{5});
+    REQUIRE(x - Distance {5} == Distance {2});
+    x -= Distance {2};
+    REQUIRE(x == Distance {5});
 
-    REQUIRE(x * Distance{2} == Distance{10});
-    x *= Distance{2};
-    REQUIRE(x == Distance{10});
+    REQUIRE(x * Distance {2} == Distance {10});
+    x *= Distance {2};
+    REQUIRE(x == Distance {10});
 
-    REQUIRE(x / Distance{2} == Distance{5});
-    x /= Distance{2};
-    REQUIRE(x == Distance{5});
-    REQUIRE(x != Distance{7});
+    REQUIRE(x / Distance {2} == Distance {5});
+    x /= Distance {2};
+    REQUIRE(x == Distance {5});
+    REQUIRE(x != Distance {7});
 
 
-    Distance a{1}, b{2}, d{2};
+    Distance a {1}, b {2}, d {2};
 
     REQUIRE(a < b);
     REQUIRE(a <= b);

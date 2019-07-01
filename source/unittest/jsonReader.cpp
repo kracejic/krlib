@@ -7,10 +7,10 @@
 using namespace kr::Json;
 TEST_CASE("JsonReader simple jsons")
 {
-    kr::Json::Reader r{R"("text")"};
+    kr::Json::Reader r {R"("text")"};
     REQUIRE(r.isString());
 
-    kr::Json::Reader r2{R"(562)"};
+    kr::Json::Reader r2 {R"(562)"};
     REQUIRE(not r2.isString());
     REQUIRE(r2.isNumber());
 
@@ -23,7 +23,7 @@ TEST_CASE("JsonReader simple jsons")
 
 TEST_CASE("JsonReader simple array")
 {
-    Reader r{R"([85, "xx", ["aa" ,1, true, null,false ], -13, 3.6])"};
+    Reader r {R"([85, "xx", ["aa" ,1, true, null,false ], -13, 3.6])"};
 
     REQUIRE(r.isArray());
     REQUIRE(r.size() == 5);
@@ -48,7 +48,7 @@ TEST_CASE("JsonReader simple array")
 
 TEST_CASE("JsonReader simple object")
 {
-    Reader r{R"({"test":"first", "num":56, "array":[5,6,"test"]})"};
+    Reader r {R"({"test":"first", "num":56, "array":[5,6,"test"]})"};
     REQUIRE(r.size() == 3);
     REQUIRE(r[0].size() == 2);
     REQUIRE(r[0].str() == R"("test":"first")");
@@ -108,7 +108,7 @@ TEST_CASE("JsonReader simple object")
 
 TEST_CASE("JsonReader escaping")
 {
-    kr::Json::Reader r{R"("\"tes\nt\t")"};
+    kr::Json::Reader r {R"("\"tes\nt\t")"};
 
     REQUIRE(r == "\"tes\nt\t");
     REQUIRE(r.raw() == R"(\"tes\nt\t)");
@@ -117,8 +117,8 @@ TEST_CASE("JsonReader escaping")
 
 TEST_CASE("NonValid jsons")
 {
-    REQUIRE_THROWS_AS(Reader{R"(})"}, std::runtime_error);
-    REQUIRE_THROWS_AS(Reader{R"([})"}, std::runtime_error);
-    REQUIRE_THROWS_AS(Reader{R"(])"}, std::runtime_error);
-    REQUIRE_THROWS_AS(Reader{R"({])"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader {R"(})"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader {R"([})"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader {R"(])"}, std::runtime_error);
+    REQUIRE_THROWS_AS(Reader {R"({])"}, std::runtime_error);
 }

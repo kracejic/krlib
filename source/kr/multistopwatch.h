@@ -77,8 +77,8 @@ class MultiStopwatch
             const std::string& _name, double _duration_ms, float _percentage)
             : name(_name)
             , duration_ms(_duration_ms)
-            , percentage(_percentage){};
-        std::string name{""};
+            , percentage(_percentage) {};
+        std::string name {""};
         double duration_ms;
         float percentage;
 
@@ -90,8 +90,8 @@ class MultiStopwatch
         std::string str(size_t namepad = 15) const
         {
             return rpad(name, namepad) + " - " +
-                kr::lpad(kr::format("%.2f%% - ", percentage), 10) +
-                std::to_string(duration_ms) + "ms";
+                   kr::lpad(kr::format("%.2f%% - ", percentage), 10) +
+                   std::to_string(duration_ms) + "ms";
         }
     };
 

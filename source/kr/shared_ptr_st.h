@@ -16,7 +16,7 @@ class shared_ptr_st
   public:
     shared_ptr_st()
         : ptr(nullptr)
-        , count(nullptr){};
+        , count(nullptr) {};
     shared_ptr_st(T* target)
         : ptr(target)
     {

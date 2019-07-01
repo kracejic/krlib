@@ -71,14 +71,14 @@ TEST_CASE("split")
     REQUIRE(
         kr::split(a) == std::vector<std::string>({"point1", "p2", "p3", "p4"}));
     REQUIRE(kr::split(a, "\t\n ", 2) ==
-        std::vector<std::string>({"point1", "p2", "p3 p4"}));
+            std::vector<std::string>({"point1", "p2", "p3 p4"}));
     std::string b = "   point1  p2\n\t   p3 p4";
     REQUIRE(kr::split(b, "\t\n ", 2) ==
-        std::vector<std::string>({"point1", "p2", "p3 p4"}));
+            std::vector<std::string>({"point1", "p2", "p3 p4"}));
     REQUIRE(kr::split(b, "\t\n ", 3) ==
-        std::vector<std::string>({"point1", "p2", "p3", "p4"}));
+            std::vector<std::string>({"point1", "p2", "p3", "p4"}));
     REQUIRE(kr::split(b, "\t\n ", 1) ==
-        std::vector<std::string>({"point1", "p2\n\t   p3 p4"}));
+            std::vector<std::string>({"point1", "p2\n\t   p3 p4"}));
 }
 
 TEST_CASE("lower/upper case")

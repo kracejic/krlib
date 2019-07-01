@@ -11,13 +11,13 @@ namespace _optional_detail
         T val;
 
         constexpr storage_t() noexcept
-            : dummy_(){};
+            : dummy_() {};
 
         constexpr storage_t(T& other)
-            : val(other){};
+            : val(other) {};
 
         constexpr storage_t(T&& other)
-            : val(other){};
+            : val(other) {};
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
@@ -25,7 +25,7 @@ namespace _optional_detail
         {
         }
 
-        ~storage_t(){};
+        ~storage_t() {};
     };
 
 } /* _optional_detail */
@@ -39,15 +39,15 @@ class optional
 
   public:
     optional()
-        : initialized(false){};
+        : initialized(false) {};
 
     optional(const T& other)
         : storage(other)
-        , initialized(true){};
+        , initialized(true) {};
 
     optional(T&& other)
         : storage(other)
-        , initialized(true){};
+        , initialized(true) {};
 
     optional(optional<T>& other)
         : initialized(other.initialized)

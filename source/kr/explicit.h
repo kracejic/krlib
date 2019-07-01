@@ -16,14 +16,14 @@ template <typename T, typename Tag>
 struct NamedType
 {
     explicit NamedType(T const& value)
-        : v(value){};
+        : v(value) {};
     explicit NamedType(T&& value)
-        : v(value){};
+        : v(value) {};
 
     template <typename T_ = T>
-    explicit NamedType(T&& value,
-        typename std::enable_if<!std::is_reference<T_>{},
-            std::nullptr_t>::type = nullptr)
+    explicit NamedType(
+        T&& value, typename std::enable_if<!std::is_reference<T_> {},
+                       std::nullptr_t>::type = nullptr)
         : v(std::move(value))
     {
     }
@@ -66,9 +66,9 @@ template <typename T, typename Tag>
 struct NamedNumberType
 {
     constexpr explicit NamedNumberType(T const& value)
-        : v(value){};
+        : v(value) {};
     constexpr explicit NamedNumberType(T&& value)
-        : v(value){};
+        : v(value) {};
     T v;
 
 

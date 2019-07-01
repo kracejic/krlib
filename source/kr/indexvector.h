@@ -14,7 +14,7 @@ namespace _indexvec_detail
         T val;
 
         constexpr storage_t() noexcept
-            : dummy_(){};
+            : dummy_() {};
 
         constexpr storage_t(T& other, K newid)
             : val(other)
@@ -23,7 +23,7 @@ namespace _indexvec_detail
         };
 
         constexpr storage_t(T&& other)
-            : val(other){};
+            : val(other) {};
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
@@ -36,7 +36,7 @@ namespace _indexvec_detail
             return val.id;
         }
 
-        ~storage_t(){};
+        ~storage_t() {};
     };
 
 } /* _indexvec_detail */
@@ -48,12 +48,12 @@ class indexvector
   private:
     using Storage_t = _indexvec_detail::storage_t<K, V>;
 
-    Storage_t* data{nullptr};
-    K* index{nullptr};
+    Storage_t* data {nullptr};
+    K* index {nullptr};
 
-    K allocated{0};
-    K used{0};
-    K freeIndexes{0};
+    K allocated {0};
+    K used {0};
+    K freeIndexes {0};
 
     inline K getFreeKey()
     {
@@ -272,7 +272,7 @@ class indexvector
     V& at(K key)
     {
         if (key < 0 || key >= allocated || index[key] == -1)
-            throw std::out_of_range{"out of range in inlineVec"};
+            throw std::out_of_range {"out of range in inlineVec"};
         return data[index[key]].val;
     }
 
@@ -280,7 +280,7 @@ class indexvector
     const V& at(K key) const
     {
         if (key < 0 || key >= allocated || index[key] == -1)
-            throw std::out_of_range{"out of range in inlineVec"};
+            throw std::out_of_range {"out of range in inlineVec"};
         return data[index[key]].val;
     }
 

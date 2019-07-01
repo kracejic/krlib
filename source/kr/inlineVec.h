@@ -13,13 +13,13 @@ namespace _inlineVec_detail
         T val;
 
         constexpr storage_t() noexcept
-            : dummy_(){};
+            : dummy_() {};
 
         constexpr storage_t(T& other)
-            : val(other){};
+            : val(other) {};
 
         constexpr storage_t(T&& other)
-            : val(other){};
+            : val(other) {};
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
@@ -27,7 +27,7 @@ namespace _inlineVec_detail
         {
         }
 
-        ~storage_t(){};
+        ~storage_t() {};
     };
 
 } /* _inlineVec_detail */
@@ -36,7 +36,7 @@ template <class T, int max_vector_size>
 class inlineVec
 {
   private:
-    std::size_t count{0};
+    std::size_t count {0};
     _inlineVec_detail::storage_t<T> data[max_vector_size];
 
 
@@ -97,13 +97,13 @@ class inlineVec
     T& at(std::size_t index)
     {
         if (index >= count)
-            throw std::out_of_range{"out of range in inlineVec"};
+            throw std::out_of_range {"out of range in inlineVec"};
         return data[index].val;
     }
     const T& at(std::size_t index) const
     {
         if (index >= count)
-            throw std::out_of_range{"out of range in inlineVec"};
+            throw std::out_of_range {"out of range in inlineVec"};
         return data[index].val;
     }
     const T& front() const

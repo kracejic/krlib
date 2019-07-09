@@ -106,7 +106,7 @@ class CanaryObject
             return false;
         return true;
     }
-    ~CanaryObject()
+    virtual ~CanaryObject()
     {
         state = State::destruct;
         states[_id] = State::destruct;

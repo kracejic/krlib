@@ -12,11 +12,11 @@ template <class T, size_t PADDING>
 class paddedVector
 {
   public:
-    // paddedVector()
-    // {
+    paddedVector()
+    {
     //     // static_assert(std::is_trivially_move_constructible<T>::value,
     //     //     "paddedVector needs trivial types");
-    // }
+    }
 
     ~paddedVector()
     {
@@ -29,7 +29,7 @@ class paddedVector
         if (newAllocated <= count)
             return;
 
-        auto newdata = new STORAGE[newAllocated];
+        STORAGE* newdata = new STORAGE[newAllocated];
         allocated = newAllocated;
 
         // Do we need to move the old data?
@@ -60,7 +60,10 @@ class paddedVector
     void clear()
     {
         for (size_t i = 0; i < count; ++i)
+        {
             ((T*)(&data[i]))->~T();
+            // (*(T*)(&data[i])).~T();
+        }
         count = 0;
     }
 
@@ -88,6 +91,8 @@ class paddedVector
     {
         static_assert(std::is_base_of<T,U>::value,
             "paddedVector only children allowed");
+        static_assert(sizeof(U) <= sizeof(STORAGE),
+            "paddedVector only children allowed");
 
         if (count == allocated)
             reserve(8 + (allocated * 4) / 3);
@@ -100,6 +105,8 @@ class paddedVector
     void push_back(const U& rhs)
     {
         static_assert(std::is_base_of<T,U>::value,
+            "paddedVector only children allowed");
+        static_assert(sizeof(U) <= sizeof(STORAGE),
             "paddedVector only children allowed");
 
         if (count == allocated)
@@ -118,6 +125,8 @@ class paddedVector
     U& get(size_t index)
     {
         static_assert(std::is_base_of<T,U>::value,
+            "paddedVector only children allowed");
+        static_assert(sizeof(U) <= sizeof(STORAGE),
             "paddedVector only children allowed");
         return *(U*)(&data[index]);
     }

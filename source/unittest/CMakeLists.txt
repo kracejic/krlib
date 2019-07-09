@@ -16,6 +16,7 @@ set(SRCTEST
     indexvector.cpp
     jsonReader.cpp
     shared_ptr_st.cpp
+    paddedVector.cpp
     )
 
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})

@@ -85,7 +85,8 @@ class CanaryObject
         moveConst,  // 5
         moveAssign, // 6
         movedFrom,  // 7
-        destruct    // 8
+        destruct,   // 8
+        vdestruct   // 9
     };
     bool isValid()
     {

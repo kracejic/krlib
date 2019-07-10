@@ -14,8 +14,8 @@ class paddedVector
   public:
     paddedVector()
     {
-    //     // static_assert(std::is_trivially_move_constructible<T>::value,
-    //     //     "paddedVector needs trivial types");
+        //     // static_assert(std::is_trivially_move_constructible<T>::value,
+        //     //     "paddedVector needs trivial types");
     }
 
     ~paddedVector()
@@ -35,7 +35,13 @@ class paddedVector
         // Do we need to move the old data?
         if (data != nullptr)
         {
+            // copy all
             std::memcpy(newdata, data, count * sizeof(STORAGE));
+            // call move constructor on the base class to owerwrite the base parts only
+            for (size_t i = 0; i < count; ++i)
+            {
+                new (&(newdata[i])) T(std::move(*((T*)(&data[i]))));
+            }
             delete[] data;
         }
 
@@ -89,10 +95,10 @@ class paddedVector
     template <class U>
     void push_back(U&& rhs)
     {
-        static_assert(std::is_base_of<T,U>::value,
-            "paddedVector only children allowed");
-        static_assert(sizeof(U) <= sizeof(STORAGE),
-            "paddedVector only children allowed");
+        static_assert(
+            std::is_base_of<T, U>::value, "paddedVector only children allowed");
+        static_assert(
+            sizeof(U) <= sizeof(STORAGE), "paddedVector only children allowed");
 
         if (count == allocated)
             reserve(8 + (allocated * 4) / 3);
@@ -104,10 +110,10 @@ class paddedVector
     template <class U>
     void push_back(const U& rhs)
     {
-        static_assert(std::is_base_of<T,U>::value,
-            "paddedVector only children allowed");
-        static_assert(sizeof(U) <= sizeof(STORAGE),
-            "paddedVector only children allowed");
+        static_assert(
+            std::is_base_of<T, U>::value, "paddedVector only children allowed");
+        static_assert(
+            sizeof(U) <= sizeof(STORAGE), "paddedVector only children allowed");
 
         if (count == allocated)
             reserve(8 + (allocated * 4) / 3);
@@ -124,15 +130,16 @@ class paddedVector
     template <class U>
     U& get(size_t index)
     {
-        static_assert(std::is_base_of<T,U>::value,
-            "paddedVector only children allowed");
-        static_assert(sizeof(U) <= sizeof(STORAGE),
-            "paddedVector only children allowed");
+        static_assert(
+            std::is_base_of<T, U>::value, "paddedVector only children allowed");
+        static_assert(
+            sizeof(U) <= sizeof(STORAGE), "paddedVector only children allowed");
         return *(U*)(&data[index]);
     }
 
-  private:
+    // private:
     using STORAGE = std::aligned_storage_t<sizeof(T) + PADDING>;
+    // using STORAGE = typename std::aligned_storage_t<sizeof(T) + PADDING>::type;
     STORAGE* data = nullptr;
     size_t allocated = 0;
     size_t count = 0;

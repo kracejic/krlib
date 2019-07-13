@@ -62,9 +62,11 @@ std::string to_string(const kr::NamedType<std::string, Tag>& val)
 //-----------------------------------------------------------------------------
 // NamedNumberType
 
-template <typename T, typename Tag>
+template <typename T, typename Tag, T def_val = 0>
 struct NamedNumberType
 {
+    constexpr explicit NamedNumberType()
+        : v(def_val) {};
     constexpr explicit NamedNumberType(T const& value)
         : v(value) {};
     constexpr explicit NamedNumberType(T&& value)
@@ -121,37 +123,37 @@ struct NamedNumberType
     }
 };
 
-template <typename T, typename Tag>
-constexpr NamedNumberType<T, Tag> operator+(
-    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
+template <typename T, typename Tag, T def_val = 0>
+constexpr NamedNumberType<T, Tag, def_val> operator+(
+    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
 {
     a += b;
     return a;
 }
-template <typename T, typename Tag>
-constexpr NamedNumberType<T, Tag> operator-(
-    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
+template <typename T, typename Tag, T def_val = 0>
+constexpr NamedNumberType<T, Tag, def_val> operator-(
+    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
 {
     a -= b;
     return a;
 }
-template <typename T, typename Tag>
-constexpr NamedNumberType<T, Tag> operator/(
-    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
+template <typename T, typename Tag, T def_val = 0>
+constexpr NamedNumberType<T, Tag, def_val> operator/(
+    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
 {
     a /= b;
     return a;
 }
-template <typename T, typename Tag>
-constexpr NamedNumberType<T, Tag> operator*(
-    NamedNumberType<T, Tag> a, const NamedNumberType<T, Tag>& b)
+template <typename T, typename Tag, T def_val = 0>
+constexpr NamedNumberType<T, Tag, def_val> operator*(
+    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
 {
     a *= b;
     return a;
 }
 
-template <typename T, typename Tag>
-std::string to_string(const kr::NamedNumberType<T, Tag>& val)
+template <typename T, typename Tag, T def_val = 0>
+std::string to_string(const kr::NamedNumberType<T, Tag, def_val>& val)
 {
     return std::to_string(val.v);
 }

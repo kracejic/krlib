@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 #ifdef UNIT_TESTS
-#include "kr/explicit.h"
 #include "catch.hpp"
+#include "kr/explicit.h"
 #include <string>
 
 
@@ -33,9 +33,12 @@ TEST_CASE("explicit2")
     REQUIRE(to_string(z) == "test");
 }
 
-using Distance = kr::NamedNumberType<int, struct DistanceTag>;
+using Distance = kr::NamedNumberType<int, struct DistanceTag, 3>;
 TEST_CASE("explicit numbered")
 {
+    Distance c;
+    REQUIRE(c == Distance {3});
+
     Distance x {5};
     REQUIRE(x == Distance {5});
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 #ifdef UNIT_TESTS
-#include "catch.hpp"
 #include "kr/explicit.h"
+#include "catch.hpp"
 #include <string>
 
 

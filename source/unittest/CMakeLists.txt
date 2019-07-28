@@ -22,7 +22,7 @@ set(SRCTEST
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})
 target_compile_definitions(unittests PRIVATE UNIT_TESTS) #add -DUNIT_TESTS define
 # target_compile_options(unittests PRIVATE -fno-access-control)
-set_property(TARGET unittests PROPERTY CXX_STANDARD 14) # we want C++14
+set_property(TARGET unittests PROPERTY CXX_STANDARD 17) # we want C++17
 add_dependencies(unittests Catch) # Catch is needed for unit tests, located in ../external
 target_include_directories(unittests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/..

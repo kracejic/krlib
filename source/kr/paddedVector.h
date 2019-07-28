@@ -37,7 +37,8 @@ class paddedVector
         {
             // copy all
             std::memcpy(newdata, data, count * sizeof(STORAGE));
-            // call move constructor on the base class to owerwrite the base parts only
+            // call move constructor on the base class to owerwrite the base
+            // parts only
             for (size_t i = 0; i < count; ++i)
             {
                 new (&(newdata[i])) T(std::move(*((T*)(&data[i]))));
@@ -139,7 +140,8 @@ class paddedVector
 
     // private:
     using STORAGE = std::aligned_storage_t<sizeof(T) + PADDING>;
-    // using STORAGE = typename std::aligned_storage_t<sizeof(T) + PADDING>::type;
+    // using STORAGE = typename std::aligned_storage_t<sizeof(T) +
+    // PADDING>::type;
     STORAGE* data = nullptr;
     size_t allocated = 0;
     size_t count = 0;

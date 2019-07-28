@@ -112,6 +112,7 @@ TEST_CASE("JsonReader escaping")
 
     REQUIRE(r == "\"tes\nt\t");
     REQUIRE(r.raw() == R"(\"tes\nt\t)");
+    REQUIRE(r.view() == R"(\"tes\nt\t)");
 }
 
 

@@ -3,6 +3,9 @@
 #include <cctype>
 #include <stdexcept>
 #include <string>
+#if __cplusplus > 201402L
+#include <string_view>
+#endif
 #include <vector>
 
 
@@ -192,6 +195,13 @@ namespace Json
             throwIfInvalid();
             return {me->text_start, me->text_end};
         }
+#if __cplusplus > 201402L
+        std::string_view view() const
+        {
+            throwIfInvalid();
+            return {me->text_start, size_t(me->text_end - me->text_start)};
+        }
+#endif
         std::string str() const
         {
             throwIfInvalid();

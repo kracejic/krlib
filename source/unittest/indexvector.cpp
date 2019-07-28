@@ -8,18 +8,18 @@
 using namespace std;
 using namespace kr;
 
-struct data
+struct Data
 {
     int id;
     std::string text {"xx"};
 
-    data(const std::string& _text)
+    Data(const std::string& _text)
         : text(_text) {};
 };
 
 TEST_CASE("indexvector basic int")
 {
-    indexvector<int, data> v;
+    indexvector<int, Data> v;
     REQUIRE(v.size() == 0);
     REQUIRE(v.capacity() == 0);
     v.reserve(32);

@@ -4,10 +4,11 @@
 
 using namespace std;
 
-struct Num 
+struct Num
 {
-    Num () = default;
-    Num (int i) : x(i) {};
+    Num() = default;
+    Num(int i)
+        : x(i) {};
     int x = 0;
 };
 
@@ -16,7 +17,7 @@ TEST_CASE("paddedVector int")
     kr::paddedVector<Num, 8> v;
 
     REQUIRE(v.size() == 0);
-    REQUIRE(v.element_size() == sizeof(Num)+12);
+    REQUIRE(v.element_size() == sizeof(Num) + 12);
 
     v.clear();
 
@@ -40,12 +41,13 @@ TEST_CASE("paddedVector string")
     kr::paddedVector<std::string, 8> v;
 
     REQUIRE(v.size() == 0);
-    REQUIRE(v.element_size() == sizeof(string)+16);
+    REQUIRE(v.element_size() == sizeof(string) + 16);
 
     v.clear();
 
     v.emplace_back("test"s);
-    // v.emplace_back("test2 a;sldkjasldkjas; ljdl;as jl;dj as;lj dl;kasj l;dj;asj"s);
+    // v.emplace_back("test2 a;sldkjasldkjas; ljdl;as jl;dj as;lj dl;kasj
+    // l;dj;asj"s);
 
     REQUIRE(v.size() == 1);
     REQUIRE(v[0] == "test");
@@ -63,7 +65,7 @@ TEST_CASE("paddedVector string")
 
 class Canary2 : public kr::CanaryObject
 {
-public:
+  public:
     // string test = "x";
 
     // ~Canary2()
@@ -71,7 +73,6 @@ public:
     //     // state = State::vdestruct;
     //     // states[_id] = State::vdestruct;
     // }
-
 };
 
 TEST_CASE("paddedVector Canary2")
@@ -80,7 +81,7 @@ TEST_CASE("paddedVector Canary2")
 
     kr::CanaryObject::initStates();
 
-    v.emplace_back(1,1);
+    v.emplace_back(1, 1);
     REQUIRE(v.size() == 1);
 
     v.push_back(Canary2());

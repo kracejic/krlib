@@ -125,28 +125,32 @@ struct NamedNumberType
 
 template <typename T, typename Tag, T def_val = 0>
 constexpr NamedNumberType<T, Tag, def_val> operator+(
-    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
+    NamedNumberType<T, Tag, def_val> a,
+    const NamedNumberType<T, Tag, def_val>& b)
 {
     a += b;
     return a;
 }
 template <typename T, typename Tag, T def_val = 0>
 constexpr NamedNumberType<T, Tag, def_val> operator-(
-    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
+    NamedNumberType<T, Tag, def_val> a,
+    const NamedNumberType<T, Tag, def_val>& b)
 {
     a -= b;
     return a;
 }
 template <typename T, typename Tag, T def_val = 0>
 constexpr NamedNumberType<T, Tag, def_val> operator/(
-    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
+    NamedNumberType<T, Tag, def_val> a,
+    const NamedNumberType<T, Tag, def_val>& b)
 {
     a /= b;
     return a;
 }
 template <typename T, typename Tag, T def_val = 0>
 constexpr NamedNumberType<T, Tag, def_val> operator*(
-    NamedNumberType<T, Tag, def_val> a, const NamedNumberType<T, Tag, def_val>& b)
+    NamedNumberType<T, Tag, def_val> a,
+    const NamedNumberType<T, Tag, def_val>& b)
 {
     a *= b;
     return a;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cctype>
+#include <cstring>
 #include <stdexcept>
 #include <string>
 #if __cplusplus > 201402L
@@ -31,18 +32,18 @@ namespace Json
         class TreeNode
         {
           public:
-            TreeNode(Type _type, char* start)
+            TreeNode(Type _type, const char* start)
                 : type(_type)
                 , text_start(start) {};
-            TreeNode(Type _type, char* start, char* end)
+            TreeNode(Type _type, const char* start, const char* end)
                 : type(_type)
                 , text_start(start)
                 , text_end(end) {};
             Type type {Type::null};
             uint32_t size {1};
             // indexes ins
-            char* text_start {0};
-            char* text_end {0};
+            const char* text_start {0};
+            const char* text_end {0};
         };
     }
 
@@ -206,7 +207,7 @@ namespace Json
         {
             throwIfInvalid();
             std::string ret = "";
-            for (char* ch = me->text_start; ch < me->text_end; ++ch)
+            for (const char* ch = me->text_start; ch < me->text_end; ++ch)
             {
                 if (*ch == '\\')
                 {
@@ -296,16 +297,18 @@ namespace Json
     {
       private:
       public:
-        std::string text;
+        // std::string text;
+        const char* text = nullptr;
+        size_t len = 0;
         std::vector<_detail::TreeNode> tree;
 
         void _parse()
         {
             std::vector<size_t> st;
 
-            for (size_t i = 0; i < text.size(); ++i)
+            for (size_t i = 0; i < len; ++i)
             {
-                char& ch = text[i];
+                const char& ch = text[i];
 
                 switch (ch)
                 {
@@ -434,8 +437,9 @@ namespace Json
       public:
         Reader() {};
 
-        Reader(std::string&& input)
-            : text(input)
+        Reader(const std::string& input)
+            : text(input.c_str())
+            , len(input.size())
         {
             _parse();
         }
@@ -443,13 +447,23 @@ namespace Json
         Reader(const char* input)
             : text(input)
         {
+            len = std::strlen(input);
             _parse();
         }
 
-        void parse(std::string&& input)
+        void parse(const char* input)
         {
             tree.clear();
             text = input;
+            len = std::strlen(input);
+            _parse();
+        }
+        
+        void parse(const std::string& input)
+        {
+            tree.clear();
+            text = input.c_str();
+            len = input.size();
             _parse();
         }
     };

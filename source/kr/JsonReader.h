@@ -451,6 +451,22 @@ namespace Json
             _parse();
         }
 
+#if __cplusplus > 201402L
+        Reader(std::string_view input)
+            : text(input.data())
+            , len(input.size())
+        {
+            _parse();
+        }
+        void parse(std::string_view input)
+        {
+            tree.clear();
+            text = input.data();
+            len = input.size();
+            _parse();
+        }
+#endif
+
         void parse(const char* input)
         {
             tree.clear();

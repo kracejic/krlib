@@ -1,4 +1,7 @@
 #include <string>
+#if __cplusplus > 201402L
+#include <string_view>
+#endif
 
 namespace kr
 {
@@ -149,6 +152,48 @@ namespace Json
                 target.push_back('"');
                 firstElement = false;
             }
+
+#if __cplusplus > 201402L
+            void put(std::string_view name, const std::string& value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+            void put(std::string_view name, std::string_view value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+            void put(const std::string& name, std::string_view value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+            void put(std::string_view value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+#endif
+
 
             // nullptr specialization
             void put(const std::string& name, const std::nullptr_t value)

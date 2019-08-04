@@ -18,6 +18,7 @@ set(SRCTEST
     shared_ptr_st.cpp
     paddedVector.cpp
     fixedString.cpp
+    result.cpp
     )
 
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})

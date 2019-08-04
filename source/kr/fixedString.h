@@ -41,6 +41,10 @@ class fixedString
     {
         return len;
     }
+    constexpr int max_size() const
+    {
+        return SIZE;
+    }
 
     constexpr char& operator[](int index)
     {
@@ -51,30 +55,67 @@ class fixedString
         return data[index];
     }
 
+    void push_back(char r)
+    {
+        data[len] = r;
+        len++;
+    }
+    void append(char r)
+    {
+        data[len] = r;
+        len++;
+    }
+    void append(const char* r)
+    {
+
+        strncpy(&(data[len]), r, SIZE - len);
+        // len = SIZE < strlen(r) ? SIZE : text.size();
+    }
+    void append(const std::string& text)
+    {
+        strncpy(&(data[len]), text.c_str(), SIZE - len);
+        len = SIZE < text.size() ? SIZE : text.size();
+    }
+
     fixedString()
     {
-        data[0] = '\0';
+    };
+    fixedString(char ch)
+    {
+        for (int i = 0; i < SIZE; ++i)
+            data[i] = ch;
     };
     fixedString(const char* txt)
     {
         strncpy(data, txt, SIZE);
         len = strlen(data);
-        data[SIZE - 1] = '\0';
     };
     fixedString(const std::string& text)
     {
         strncpy(data, text.c_str(), SIZE);
         len = SIZE < text.size() ? SIZE : text.size();
-        data[SIZE - 1] = '\0';
     };
 #if __cplusplus > 201402L
-    fixedString(const std::string_view& text)
+    fixedString(const std::string_view text)
     {
         len = SIZE < text.size() ? SIZE : text.size();
         strncpy(data, text.data(), len);
         data[SIZE - 1] = '\0';
     };
+
+    operator std::string_view()
+    {
+        return {data, len};
+    }
+    std::string_view asString_view()
+    {
+        return {data, len};
+    }
 #endif
+    std::string asString() const
+    {
+        return {data, len};
+    }
 
 
     constexpr bool operator==(const fixedString<SIZE>& r) const
@@ -118,7 +159,7 @@ class fixedString
         return not this->operator==(r);
     }
 #if __cplusplus > 201402L
-    constexpr bool operator==(const std::string_view& r) const
+    constexpr bool operator==(const std::string_view r) const
     {
         if (r.size() != len)
             return false;
@@ -127,7 +168,7 @@ class fixedString
                 return false;
         return true;
     }
-    constexpr bool operator!=(const std::string_view& r) const
+    constexpr bool operator!=(const std::string_view r) const
     {
         return not this->operator==(r);
     }

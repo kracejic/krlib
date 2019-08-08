@@ -36,7 +36,7 @@ namespace _result_detail
 
 enum whatever
 {
-    FAILED = 1
+    FAILED
 };
 
 
@@ -109,7 +109,7 @@ class result
     {
         return not _success;
     };
-    constexpr bool success() const
+    constexpr bool ok() const
     {
         return _success;
     };

@@ -474,7 +474,7 @@ namespace Json
             len = std::strlen(input);
             _parse();
         }
-        
+
         void parse(const std::string& input)
         {
             tree.clear();

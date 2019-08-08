@@ -71,6 +71,21 @@ TEST_CASE("JsonReader simple object")
         REQUIRE(not e.value().isObject());
     }
 
+    for (auto& e : r["array"])
+    {
+        REQUIRE(e.value().exists());
+    }
+    for (auto& e : r["nonarray"])
+    {
+        (void)(e);
+        REQUIRE(false);
+    }
+    for (auto& e : r["array"][1])
+    {
+        (void)(e);
+        REQUIRE(false);
+    }
+
     std::string def = "xx";
 
     REQUIRE(r.get_or("test", "xx") == "first");

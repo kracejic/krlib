@@ -7,10 +7,10 @@ TEST_CASE("result")
 {
     kr::result<int> empty;
 
-    REQUIRE(empty.success() == false);
+    REQUIRE(empty.ok() == false);
 
     kr::result<int> val(4);
-    REQUIRE(val.success() == true);
+    REQUIRE(val.ok() == true);
     REQUIRE(*val == 4);
     REQUIRE(val.value() == 4);
 
@@ -27,6 +27,11 @@ kr::result<std::string> funn(bool x)
         return {kr::FAILED, "ddd"};
 }
 
+// kr::result<void> funn3()
+// {
+//     
+// }
+
 TEST_CASE("result from function")
 {
     auto empty = funn(false);
@@ -35,7 +40,7 @@ TEST_CASE("result from function")
     REQUIRE(empty.value_or("33") == "33");
 
     auto val = funn(true);
-    REQUIRE(val.success() == true);
+    REQUIRE(val.ok() == true);
     REQUIRE(!!val == true);
     std::string x = *val;
     REQUIRE(x == "ahoj");

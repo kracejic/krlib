@@ -1,6 +1,6 @@
 #ifdef UNIT_TESTS
-#include "kr/result.h"
 #include "catch.hpp"
+#include "kr/result.h"
 #include <string>
 
 TEST_CASE("result")
@@ -26,11 +26,6 @@ kr::result<std::string> funn(bool x)
     else
         return {kr::FAILED, "ddd"};
 }
-
-// kr::result<void> funn3()
-// {
-//     
-// }
 
 TEST_CASE("result from function")
 {
@@ -109,6 +104,27 @@ TEST_CASE("result CanaryObject")
             kr::CanaryObject::states[0] == kr::CanaryObject::State::construct2);
     }
     REQUIRE(kr::CanaryObject::states[0] == kr::CanaryObject::State::destruct);
+}
+
+std::string t = "brekeke";
+kr::result<std::string&> checkStr(bool a)
+{
+    if (a)
+        return t;
+    else
+        return {};
+}
+
+TEST_CASE("result refto obj")
+{
+    REQUIRE(!! checkStr(true));
+    REQUIRE(not checkStr(false));
+
+    std::string x = *checkStr(true);
+    REQUIRE(x == t);
+
+    auto result = checkStr(false);
+    REQUIRE_THROWS_AS(result.value(), std::range_error);
 }
 
 #endif

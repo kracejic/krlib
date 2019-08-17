@@ -1,8 +1,9 @@
 #pragma once
 
-#include <string>
 #include <stdexcept>
+#include <string>
 #include <utility>
+#include <type_traits>
 
 namespace kr
 {
@@ -29,6 +30,70 @@ namespace _result_detail
         {
         }
 
+        constexpr void erase()
+        {
+            val.T::~T();
+        }
+
+        constexpr T* valptr()
+        {
+            return &val;
+        }
+        constexpr T& valref()
+        {
+            return val;
+        }
+        constexpr const T* valptr() const
+        {
+            return &val;
+        }
+        constexpr const T& valref() const
+        {
+            return val;
+        }
+
+        ~storage_t() {};
+    };
+
+    template <class T>
+    union storage_t<T&> {
+        unsigned char dummy_;
+        T* val;
+
+        constexpr storage_t() noexcept
+            : dummy_() {};
+
+        constexpr storage_t(T& other)
+            : val(&other) {};
+
+        constexpr storage_t(T&& other) = delete;
+
+        template <class... Args>
+        constexpr storage_t(Args&&... args)
+            : val((args)...)
+        {
+        }
+
+        constexpr void erase() {}
+
+        constexpr T* valptr()
+        {
+            return val;
+        }
+        constexpr T& valref()
+        {
+            return *val;
+        }
+        constexpr const T* valptr() const
+        {
+            return val;
+        }
+        constexpr const T& valref() const
+        {
+            return *val;
+        }
+
+
         ~storage_t() {};
     };
 
@@ -49,14 +114,23 @@ class result
     std::string _error = "";
 
   public:
-
-
     result(whatever f)
-        : _success(false) {(void)(f);};
+        : _success(false)
+    {
+        (void)(f);
+    };
     result(whatever f, const std::string& error)
-        : _success(false), _error(error) {(void)(f);};
+        : _success(false)
+        , _error(error)
+    {
+        (void)(f);
+    };
     result(whatever f, const char* error)
-        : _success(false), _error(error) {(void)(f);};
+        : _success(false)
+        , _error(error)
+    {
+        (void)(f);
+    };
 
     result()
         : _success(false) {};
@@ -65,9 +139,10 @@ class result
         : storage(other)
         , _success(true) {};
 
+    template<typename = std::enable_if<std::is_reference<T>::value>>
     result(T&& other)
         : storage(other)
-        , _success(true) {};
+        , _success(true) {}
 
     result(result<T>& other)
         : _success(other._success)
@@ -92,7 +167,7 @@ class result
     ~result()
     {
         if (_success)
-            storage.val.T::~T();
+            storage.erase();
     }
 
     constexpr explicit operator bool() const
@@ -114,45 +189,44 @@ class result
         return _success;
     };
 
-    constexpr const T* operator->() const
+    constexpr auto operator-> () const
     {
-        return &storage.val;
+        return storage.valptr();
     };
-    constexpr T* operator->()
+    constexpr auto operator-> ()
     {
-        return &storage.val;
+        return storage.valptr();
     };
-    constexpr const T& operator*() const&
+    constexpr auto operator*() const&
     {
-        return storage.val;
+        return storage.valref();
     };
-    constexpr T& operator*() &
+    constexpr auto operator*() &
     {
-        return storage.val;
+        return storage.valref();
     };
-    constexpr const T&& operator*() const&&
+    constexpr const auto&& operator*() const&&
     {
-        return storage.val;
+        return storage.valref();
     };
-    constexpr T&& operator*() &&
+    constexpr auto&& operator*() &&
     {
-        return storage.val;
+        return storage.valref();
     };
 
 
-    constexpr T& value()
+    constexpr auto value()
     {
         if (not _success)
-            throw std::range_error("bad result: "+_error);
-        return storage.val;
+            throw std::range_error("bad result: " + _error);
+        return storage.valref();
     }
-    constexpr T& value_or(T&& other)
+    constexpr auto value_or(T&& other)
     {
         if (not _success)
             return other;
-        return storage.val;
+        return storage.valref();
     }
-
 };
 
 } /* kr */

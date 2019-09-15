@@ -54,6 +54,20 @@ class inlineVec
         rhs.count = 0;
     }
 
+    inlineVec& operator=(const inlineVec<T, max_vector_size>& rhs)
+    {
+        this->clear();
+        for (const auto& it : rhs)
+            this->push_back(it);
+    }
+    inlineVec& operator=(inlineVec<T, max_vector_size>&& rhs)
+    {
+        this->clear();
+        for (auto& it : rhs)
+            this->push_back(std::move(it));
+        rhs.count = 0;
+    }
+
     ~inlineVec()
     {
         for (size_t i = 0; i < count; ++i)

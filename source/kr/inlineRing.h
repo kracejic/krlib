@@ -1,4 +1,3 @@
-
 #pragma once
 #include <cstdint>
 #include <stdexcept>
@@ -50,7 +49,7 @@ class inlineRing
     pointerType mBack {0};
     _inlineRing_detail::storage_t<T> data[max_ring_size];
 
-    pointerType addr(pointerType index)
+    pointerType addr(pointerType index) const
     {
         return index & (max_ring_size - 1);
     }
@@ -212,10 +211,11 @@ class inlineRing
         mBack--;
     }
 
-    class iterator
+    template <class ParentRef, class T_ITER>
+    class _iterator
     {
       private:
-        inlineRing<T, max_ring_size, pointerType>& parent;
+        ParentRef parent;
         pointerType pos;
 
       public:
@@ -227,29 +227,31 @@ class inlineRing
 
 
         // typedef T value_type;
-        iterator(inlineRing<T, max_ring_size, pointerType>& _parent,
-            pointerType _pos)
+        _iterator(ParentRef _parent, pointerType _pos)
             : parent(_parent)
             , pos(_pos) {};
-        iterator& operator--()
+        _iterator& operator--()
         {
             pos--;
             return *this;
         }
-        iterator& operator++()
+        _iterator& operator++()
         {
             pos++;
             return *this;
         }
-        bool operator!=(const iterator& rhs)
+        bool operator!=(const _iterator& rhs)
         {
             return pos != rhs.pos;
         }
-        T& operator*()
+        T_ITER& operator*()
         {
             return parent.data[parent.addr(pos)].val;
         }
     };
+    using iterator = _iterator<inlineRing<T, max_ring_size, pointerType>&, T>;
+    using const_iterator =
+        _iterator<const inlineRing<T, max_ring_size, pointerType>&, const T>;
 
     iterator begin()
     {
@@ -258,6 +260,14 @@ class inlineRing
     iterator end()
     {
         return iterator(*this, mBack);
+    }
+    const_iterator begin() const
+    {
+        return const_iterator(*this, mFront);
+    }
+    const_iterator end() const
+    {
+        return const_iterator(*this, mBack);
     }
     iterator insert(int pos, const T& value)
     {

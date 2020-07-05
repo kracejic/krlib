@@ -96,6 +96,16 @@ namespace Json
             };
 
             template <class T>
+            void put(const char* name, const T value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":");
+                target.append(std::to_string(value));
+                firstElement = false;
+            }
+            template <class T>
             void put(const std::string& name, const T value)
             {
                 comma();
@@ -133,6 +143,27 @@ namespace Json
                 firstElement = false;
             }
 
+            void put(const char* name, const char* value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+            void put(const char* name, const std::string& value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+
             // string specialization
             void put(const std::string& name, const std::string& value)
             {
@@ -154,7 +185,7 @@ namespace Json
             }
 
 #if __cplusplus > 201402L
-            void put(std::string_view name, const std::string& value)
+            void put(const char* name, const std::string_view value)
             {
                 comma();
                 target.push_back('"');
@@ -164,7 +195,7 @@ namespace Json
                 target.push_back('"');
                 firstElement = false;
             }
-            void put(std::string_view name, std::string_view value)
+            void put(const std::string_view name, const std::string& value)
             {
                 comma();
                 target.push_back('"');
@@ -174,7 +205,7 @@ namespace Json
                 target.push_back('"');
                 firstElement = false;
             }
-            void put(const std::string& name, std::string_view value)
+            void put(const std::string_view name, const std::string_view value)
             {
                 comma();
                 target.push_back('"');
@@ -184,7 +215,17 @@ namespace Json
                 target.push_back('"');
                 firstElement = false;
             }
-            void put(std::string_view value)
+            void put(const std::string& name, const std::string_view value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":\"");
+                target.append(value);
+                target.push_back('"');
+                firstElement = false;
+            }
+            void put(const std::string_view value)
             {
                 comma();
                 target.push_back('"');
@@ -196,6 +237,15 @@ namespace Json
 
 
             // nullptr specialization
+            void put(const char* name, const std::nullptr_t value)
+            {
+                (void)value;
+                comma();
+                target.push_back('"');
+                target.append(name);
+                target.append("\":null");
+                firstElement = false;
+            }
             void put(const std::string& name, const std::nullptr_t value)
             {
                 (void)value;
@@ -214,6 +264,17 @@ namespace Json
             }
 
             // bool specialization
+            void put(const char* name, bool value)
+            {
+                comma();
+                target.push_back('"');
+                target.append(name);
+                if (value)
+                    target.append(R"(":true)");
+                else
+                    target.append(R"(":false)");
+                firstElement = false;
+            }
             void put(const std::string& name, bool value)
             {
                 comma();

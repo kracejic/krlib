@@ -8,6 +8,7 @@ set(SRCTEST
     base64.cpp
     krstring.cpp
     jsonwritter.cpp
+    flatimap.cpp
     explicit.cpp
     optional.cpp
     stopwatch.cpp
@@ -43,3 +44,11 @@ add_custom_target(unitall
     DEPENDS unittests)
 
 
+
+if(GDB_PATH)
+    add_custom_target(unit-gdb
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test
+        USES_TERMINAL
+        DEPENDS unittests
+        COMMAND ${GDB_PATH} $<TARGET_FILE:unittests>)
+endif()

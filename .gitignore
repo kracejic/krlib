@@ -38,3 +38,6 @@ tags
 *.swp
 *.swo
 
+.clangd/*
+compile_commands.json
+.gdb_history

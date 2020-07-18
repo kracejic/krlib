@@ -1,6 +1,7 @@
 #include "kr/stopwatch.h"
-#include "catch.hpp"
 #include "kr/multistopwatch.h"
+
+#include "catch.hpp"
 
 #include "iostream"
 #include <thread>

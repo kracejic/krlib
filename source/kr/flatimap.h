@@ -67,7 +67,7 @@ class flatimap
         // early exits
         if (used == 0)
             return 0;
-        if (index[used-1].key < key)
+        if (index[used - 1].key < key)
             return used;
 
         K l = 0;
@@ -181,7 +181,7 @@ class flatimap
         return allocated;
     }
 
-    bool has(K key) const
+    bool contains(K key) const
     {
         return (get(key) != -1);
     }
@@ -203,6 +203,8 @@ class flatimap
 
     V& put(K key, V&& value)
     {
+        if (used >= (allocated - 1))
+            reserve(allocated * 2);
         auto in = get_mid(key);
         std::copy_backward(&(index[in]), &(index[used]), &(index[used + 1]));
         index[in].key = key;
@@ -211,8 +213,14 @@ class flatimap
         used++;
         return data[used - 1].val;
     }
+    V& insert_or_assign(K key, V&& value)
+    {
+        return put(key, value);
+    }
     V& put(K key, const V& value)
     {
+        if (used >= (allocated - 1))
+            reserve(allocated * 2);
         auto in = get_mid(key);
         std::copy_backward(&(index[in]), &(index[used]), &(index[used + 1]));
         index[in].key = key;
@@ -221,9 +229,15 @@ class flatimap
         used++;
         return data[used - 1].val;
     }
+    V& insert_or_assign(K key, const V& value)
+    {
+        return put(key, value);
+    }
     template <class... Args>
     V& emplace(K key, Args&&... args)
     {
+        if (used >= (allocated - 1))
+            reserve(allocated * 2);
         auto in = get_mid(key);
         std::copy_backward(&(index[in]), &(index[used]), &(index[used + 1]));
         index[in].key = key;
@@ -236,7 +250,7 @@ class flatimap
     void erase(K key)
     {
         auto pos_index = get_index_to_index(key);
-        auto pos = index[pos_index];
+        auto pos = index[pos_index].index;
 
         // delete from index
         std::copy(&(index[pos_index + 1]), &(index[used]), &(index[pos_index]));
@@ -246,7 +260,7 @@ class flatimap
         if (used != pos)
         {
             // Swap if not at the end of the vector
-            index[data[used].id()] = pos;
+            index[data[used].id()].index = pos;
             data[pos].val = std::move(data[used].val);
         }
         data[used].val.~V();

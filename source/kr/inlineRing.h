@@ -253,14 +253,6 @@ class inlineRing
     using const_iterator =
         _iterator<const inlineRing<T, max_ring_size, pointerType>&, const T>;
 
-    const iterator begin() const
-    {
-        return iterator(*this, mFront);
-    }
-    const iterator end() const
-    {
-        return iterator(*this, mBack);
-    }
     iterator begin()
     {
         return iterator(*this, mFront);
@@ -268,6 +260,14 @@ class inlineRing
     iterator end()
     {
         return iterator(*this, mBack);
+    }
+    const_iterator begin() const
+    {
+        return const_iterator(*this, mFront);
+    }
+    const_iterator end() const
+    {
+        return const_iterator(*this, mBack);
     }
     const_iterator cbegin() const
     {

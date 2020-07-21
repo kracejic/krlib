@@ -3,6 +3,7 @@
 #include "kr/canaryobject.h"
 #include <cstring>
 
+#include <iterator>
 #include <string>
 
 using namespace std;
@@ -46,7 +47,7 @@ TEST_CASE("indexvector basic int")
     REQUIRE(v.size() == 2);
     REQUIRE(v[key3].text == "ddd");
 
-    v.erase(key1);
+    v.erase(&v[key1]);
     REQUIRE(v.size() == 1);
 
 
@@ -188,10 +189,7 @@ TEST_CASE("indexvector stressing")
 
 
     // Delete all of them
-    for (int i = 0; i < 128; ++i)
-    {
-        v.erase(i);
-    }
+    v.erase(v.begin(), v.end());
 
     REQUIRE(v.capacity() == 128);
     REQUIRE(v.size() == 0);
@@ -209,8 +207,10 @@ TEST_CASE("indexvector stressing")
     // Delete all of them
     for (int i = 0; i < 128; ++i)
     {
-        v.erase(i);
+        v.erase(&v[i]);
     }
+    REQUIRE(v.capacity() == 128);
+    REQUIRE(v.size() == 0);
 
     for (int i = 0; i < 135; ++i)
     {

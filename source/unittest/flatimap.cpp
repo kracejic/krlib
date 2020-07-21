@@ -82,7 +82,7 @@ int filling(T& m)
     for (int i = 0; i < 10000; ++i)
     {
         m.clear();
-        for (int ii = 0; ii < 350; ++ii)
+        for (int ii = 0; ii < 150; ++ii)
         {
             int index = rand() % 100000;
             m.insert_or_assign(index, TestObj());
@@ -124,7 +124,7 @@ template <class T>
 int access(T& m)
 {
     int ret = 0;
-    for (int i = 0; i < 1000000; ++i)
+    for (int i = 0; i < 100000; ++i)
     {
         int index = rand() % MAXID;
         if (m.contains(index) == true)
@@ -137,7 +137,7 @@ template <class T>
 int process(T& m)
 {
     int ret = 0;
-    for (int i = 0; i < 1000000; ++i)
+    for (int i = 0; i < 100000; ++i)
     {
         for (auto& x : m)
             ret += x.second.x;
@@ -148,7 +148,7 @@ template <class T>
 int process2(T& m)
 {
     int ret = 0;
-    for (int i = 0; i < 1000000; ++i)
+    for (int i = 0; i < 100000; ++i)
     {
         for (auto& x : m)
             ret += x.x;

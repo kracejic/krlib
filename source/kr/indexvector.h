@@ -9,7 +9,8 @@ namespace _indexvec_detail
 {
     // TODO make it possible even for simple things
     template <class K, class T>
-    union storage_t {
+    union storage_t
+    {
         unsigned char dummy_;
         T val;
 
@@ -308,6 +309,32 @@ class indexvector
             data[pos].val = std::move(data[used].val);
         }
         data[used].val.~V();
+    }
+    void erase(V* iter)
+    {
+        auto key = iter->id;
+        // auto pos = index[key];
+        auto pos = iter - begin();
+        index[key] = -1; // mark index unused
+
+        // add to free indexes stack
+        freeIndexes++;
+        index[2 * allocated - freeIndexes] = key;
+
+        // Delete object
+        used--;
+        if (used != pos)
+        {
+            // Swap if not at the end of the vector
+            index[data[used].id()] = pos;
+            data[pos].val = std::move(data[used].val);
+        }
+        data[used].val.~V();
+    }
+    void erase(V* iter, V* iter2)
+    {
+        for (V* i = iter2-1; i >= iter; i--)
+            erase(i);
     }
 
     V* begin()

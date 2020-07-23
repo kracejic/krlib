@@ -82,11 +82,11 @@ class indexvector
         reserve(rhs.allocated);
 
         // copy the data
-        for (K i = 0; i < used; ++i)
+        for (K i = 0; i < rhs.used; ++i)
             new (&data[i].val) V((rhs.data[i].val));
 
         // Copy the indexes
-        std::copy(rhs.begin(), rhs.end(), begin());
+        std::copy(rhs.index, rhs.index + 2 * rhs.allocated, index);
 
         used = rhs.used;
         freeIndexes = rhs.freeIndexes;
@@ -115,12 +115,12 @@ class indexvector
         allocated = 0;
         delete[] index;
         delete[] data;
+        index = nullptr;
         reserve(rhs.allocated);
 
         // copy the data/indexes
-        for (K i = 0; i < used; ++i)
+        for (K i = 0; i < rhs.used; ++i)
             new (&data[i].val) V((rhs.data[i].val));
-        std::copy(rhs.begin(), rhs.end(), begin());
         std::copy(rhs.index, rhs.index + 2 * rhs.allocated, index);
 
         // copy other values

@@ -77,6 +77,7 @@ class inlineRing
         this->clear();
         for (const auto& it : rhs)
             this->push_back(it);
+        return *this;
     }
     inlineRing& operator=(inlineRing<T, max_ring_size, pointerType>&& rhs)
     {
@@ -85,6 +86,7 @@ class inlineRing
             this->push_back(std::move(it));
         rhs.mFront = 0;
         rhs.mBack = 0;
+        return *this;
     }
 
     ~inlineRing()

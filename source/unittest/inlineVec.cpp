@@ -5,6 +5,12 @@
 
 using namespace std;
 
+kr::inlineVec<int, 10> fun_int()
+{
+    kr::inlineVec<int, 10> t;
+    t.push_back(3);
+    return t;
+}
 TEST_CASE("inlineVec int")
 {
     kr::inlineVec<int, 10> t;
@@ -30,6 +36,8 @@ TEST_CASE("inlineVec int")
     REQUIRE(not t2.full());
     t2.push_back(2);
     REQUIRE(t2.full());
+
+    t = fun_int();
 }
 
 TEST_CASE("inlineVec string")
@@ -50,6 +58,7 @@ TEST_CASE("inlineVec string")
     REQUIRE(sum == "hello world!");
 }
 
+
 struct Test
 {
     int a;
@@ -59,6 +68,11 @@ struct Test
         : a(_a)
         , x(_x) {};
 };
+kr::inlineVec<Test, 13> fun_test()
+{
+    kr::inlineVec<Test, 13> t;
+    return t;
+}
 TEST_CASE("inlineVec struct")
 {
     kr::inlineVec<Test, 13> t;
@@ -73,10 +87,18 @@ TEST_CASE("inlineVec struct")
     REQUIRE(t.size() == 2);
     t.clear();
     REQUIRE(t.size() == 0);
+
+    t = fun_test();
 }
 
 #include "kr/canaryobject.h"
 kr::CanaryObject::State kr::CanaryObject::states[256];
+
+kr::inlineVec<kr::CanaryObject, 13> fun()
+{
+    kr::inlineVec<kr::CanaryObject, 13> t;
+    return t;
+}
 
 TEST_CASE("inlineVec canary")
 {
@@ -100,6 +122,8 @@ TEST_CASE("inlineVec canary")
     REQUIRE(c.state == kr::CanaryObject::State::movedFrom);
     REQUIRE(kr::CanaryObject::states[1] == kr::CanaryObject::State::moveConst);
     REQUIRE(t.back().state == kr::CanaryObject::State::moveConst);
+
+    t = fun();
 }
 
 

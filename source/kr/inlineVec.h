@@ -8,7 +8,8 @@ namespace kr
 namespace _inlineVec_detail
 {
     template <class T>
-    union storage_t {
+    union storage_t
+    {
         unsigned char dummy_;
         T val;
 
@@ -56,16 +57,24 @@ class inlineVec
 
     inlineVec& operator=(const inlineVec<T, max_vector_size>& rhs)
     {
+        if (&rhs == this)
+            return *this;
+
         this->clear();
         for (const auto& it : rhs)
             this->push_back(it);
+        return *this;
     }
-    inlineVec& operator=(inlineVec<T, max_vector_size>&& rhs)
+    inlineVec<T, max_vector_size>& operator=(
+        inlineVec<T, max_vector_size>&& rhs) noexcept
     {
+        if (&rhs == this)
+            return *this;
         this->clear();
         for (auto& it : rhs)
             this->push_back(std::move(it));
         rhs.count = 0;
+        return *this;
     }
 
     ~inlineVec()

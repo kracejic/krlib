@@ -171,6 +171,25 @@ class inlineVec
         std::move((T*)&(data[pos + 1]), (T*)&data[count].val, (T*)&(data[pos]));
         count--;
     }
+    T* find(const T& value) const
+    {
+        for (const auto& it : *this)
+        {
+            if(it == value)
+                return *it;
+        }
+        return nullptr;
+    }
+    bool try_add(const T& value)
+    {
+        for (const auto& it : *this)
+        {
+            if(it == value)
+                return false;
+        }
+        push_back(value);
+        return true;
+    }
     T* insert(int pos, const T& value)
     {
         if (count == 0)

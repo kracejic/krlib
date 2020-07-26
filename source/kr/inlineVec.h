@@ -8,7 +8,8 @@ namespace kr
 namespace _inlineVec_detail
 {
     template <class T>
-    union storage_t {
+    union storage_t
+    {
         unsigned char dummy_;
         T val;
 
@@ -26,6 +27,11 @@ namespace _inlineVec_detail
             : val((args)...)
         {
         }
+
+        storage_t(const storage_t& p){};
+        storage_t& operator=(const storage_t& p){};
+        storage_t(storage_t&& p){};
+        storage_t& operator=(storage_t&& p){};
 
         ~storage_t() {};
     };
@@ -50,28 +56,43 @@ class inlineVec
     inlineVec(inlineVec<T, max_vector_size>&& rhs)
     {
         for (auto& it : rhs)
-            this->push_back(std::move(it));
+            this->push_back(it);
         rhs.count = 0;
     }
 
     inlineVec& operator=(const inlineVec<T, max_vector_size>& rhs)
     {
+        if (&rhs == this)
+            return *this;
+
         this->clear();
         for (const auto& it : rhs)
             this->push_back(it);
     }
-    inlineVec& operator=(inlineVec<T, max_vector_size>&& rhs)
+    inlineVec<T, max_vector_size>& operator=(
+        inlineVec<T, max_vector_size>&& rhs) noexcept
     {
+        if (&rhs == this)
+            return *this;
+
         this->clear();
+        printf("TEST\n");
         for (auto& it : rhs)
-            this->push_back(std::move(it));
+        {
+            printf(" looping\n");
+            // this->push_back(it);
+        }
+        printf("DONE\n");
         rhs.count = 0;
+        printf("DONE2\n");
     }
 
     ~inlineVec()
     {
+        printf("FIN\n");
         for (size_t i = 0; i < count; ++i)
             data[i].val.~T();
+        printf("FIN2\n");
     }
     void clear()
     {
@@ -81,7 +102,7 @@ class inlineVec
     }
     void push_back(T&& rhs)
     {
-        new (&data[count].val) T(std::move(rhs));
+        new (&data[count].val) T(rhs);
         count++;
     }
     void push_back(const T& rhs)

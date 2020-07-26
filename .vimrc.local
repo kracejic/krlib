@@ -1,0 +1,1 @@
+nmap <leader>bg :Termdebug ../build/source/unittest/unittests -cd test<CR>  

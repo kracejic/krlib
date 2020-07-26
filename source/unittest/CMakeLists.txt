@@ -22,6 +22,8 @@ set(SRCTEST
     result.cpp
     )
 
+add_compile_options("-fno-inline")
+
 add_executable(unittests EXCLUDE_FROM_ALL ${SRCTEST})
 target_compile_definitions(unittests PRIVATE UNIT_TESTS) #add -DUNIT_TESTS define
 # target_compile_options(unittests PRIVATE -fno-access-control)

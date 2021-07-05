@@ -34,6 +34,7 @@ TEST_CASE("explicit2")
 }
 
 using Distance = kr::NamedNumberType<int, struct DistanceTag, 3>;
+using Distance2 = kr::NamedNumberType<int, struct DistanceTag2, 3>;
 TEST_CASE("explicit numbered")
 {
     Distance c;

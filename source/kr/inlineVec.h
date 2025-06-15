@@ -33,11 +33,11 @@ namespace _inlineVec_detail
 
 } /* _inlineVec_detail */
 
-template <class T, int max_vector_size>
+template <class T, int max_vector_size, class SIZE_T=std::size_t>
 class inlineVec
 {
   private:
-    std::size_t count {0};
+    SIZE_T count {0};
     _inlineVec_detail::storage_t<T> data[max_vector_size];
 
 
@@ -109,21 +109,21 @@ class inlineVec
         count--;
         data[count].val.~T();
     }
-    T& operator[](std::size_t index)
+    T& operator[](SIZE_T index)
     {
         return data[index].val;
     }
-    const T& operator[](std::size_t index) const
+    const T& operator[](SIZE_T index) const
     {
         return data[index].val;
     }
-    T& at(std::size_t index)
+    T& at(SIZE_T index)
     {
         if (index >= count)
             throw std::out_of_range {"out of range in inlineVec"};
         return data[index].val;
     }
-    const T& at(std::size_t index) const
+    const T& at(SIZE_T index) const
     {
         if (index >= count)
             throw std::out_of_range {"out of range in inlineVec"};

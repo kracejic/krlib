@@ -269,6 +269,12 @@ class indexvector
         return data[index[key]].val;
     }
 
+    const V& operator[](K key) const
+    {
+        return data[index[key]].val;
+    }
+
+
     /// Throws exception when object does not exists
     V& at(K key)
     {

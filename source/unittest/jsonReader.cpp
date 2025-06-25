@@ -126,6 +126,7 @@ TEST_CASE("JsonReader escaping")
     kr::Json::Reader r {R"("\"tes\nt\t")"};
 
     REQUIRE(r == "\"tes\nt\t");
+    REQUIRE(r.str() == "\"tes\nt\t");
     REQUIRE(r.raw() == R"(\"tes\nt\t)");
     REQUIRE(r.view() == R"(\"tes\nt\t)");
 }

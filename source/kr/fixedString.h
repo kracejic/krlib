@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <string>
+#include <cstdint>
 #if __cplusplus > 201402L
 #include <string_view>
 #endif
@@ -10,12 +11,12 @@ namespace kr
 {
 
 
-template <int SIZE>
+template <int SIZE, class SIZE_TYPE=uint8_t>
 class fixedString
 {
   public:
     char data[SIZE];
-    int len = 0;
+    SIZE_TYPE len = 0;
 
     constexpr auto begin()
     {
@@ -33,24 +34,24 @@ class fixedString
     {
         return begin() + len;
     }
-    constexpr int length() const
+    constexpr SIZE_TYPE length() const
     {
         return len;
     }
-    constexpr int size() const
+    constexpr SIZE_TYPE size() const
     {
         return len;
     }
-    constexpr int max_size() const
+    constexpr SIZE_TYPE max_size() const
     {
         return SIZE;
     }
 
-    constexpr char& operator[](int index)
+    constexpr char& operator[](SIZE_TYPE index)
     {
         return data[index];
     }
-    constexpr const char& operator[](int index) const
+    constexpr const char& operator[](SIZE_TYPE index) const
     {
         return data[index];
     }
@@ -82,7 +83,7 @@ class fixedString
     };
     fixedString(char ch)
     {
-        for (int i = 0; i < SIZE; ++i)
+        for (SIZE_TYPE i = 0; i < SIZE; ++i)
             data[i] = ch;
     };
     fixedString(const char* txt)
@@ -122,7 +123,7 @@ class fixedString
     {
         if (r.size() != len)
             return false;
-        for (int i = 0; i < len; ++i)
+        for (SIZE_TYPE i = 0; i < len; ++i)
             if (data[i] != r.data[i])
                 return false;
         return true;
@@ -133,10 +134,10 @@ class fixedString
     }
     constexpr bool operator==(const char* r) const
     {
-        int rsize = strlen(r);
+        SIZE_TYPE rsize = strlen(r);
         if (rsize != len)
             return false;
-        for (int i = 0; i < len; ++i)
+        for (SIZE_TYPE i = 0; i < len; ++i)
             if (data[i] != r[i])
                 return false;
         return true;
@@ -149,7 +150,7 @@ class fixedString
     {
         if (r.size() != len)
             return false;
-        for (int i = 0; i < len; ++i)
+        for (SIZE_TYPE i = 0; i < len; ++i)
             if (data[i] != r[i])
                 return false;
         return true;
@@ -163,7 +164,7 @@ class fixedString
     {
         if (r.size() != len)
             return false;
-        for (int i = 0; i < len; ++i)
+        for (SIZE_TYPE i = 0; i < len; ++i)
             if (data[i] != r[i])
                 return false;
         return true;

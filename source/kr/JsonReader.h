@@ -3,6 +3,7 @@
 #include <cctype>
 #include <cstring>
 #include <stdexcept>
+#include <cstdint>
 #include <string>
 #if __cplusplus > 201402L
 #include <string_view>

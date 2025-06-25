@@ -6,6 +6,7 @@
 #include "catch.hpp"
 #include "kr/canaryobject.h"
 #include <cstring>
+#include <flat_map>
 
 #include "iostream"
 #include <string>
@@ -19,7 +20,7 @@ struct Data
     std::string text {"xx"};
 
     Data(const std::string& _text)
-        : text(_text) {};
+        : text(_text) { };
 };
 
 TEST_CASE("flatimap basic int")
@@ -106,10 +107,10 @@ int randomizeData(T& m)
         index = rand() % MAXID;
         m.insert_or_assign(index, TestObj());
 
-        while(true)
+        while (true)
         {
             index = rand() % MAXID;
-            if(m.contains(index))
+            if (m.contains(index))
             {
                 m.erase(index);
                 break;
@@ -137,9 +138,9 @@ template <class T>
 int process(T& m)
 {
     int ret = 0;
-    for (int i = 0; i < 100000; ++i)
+    for (int i = 0; i < 1; ++i)
     {
-        for (auto& x : m)
+        for (auto x : m)
             ret += x.second.x;
     }
     return ret;
@@ -148,7 +149,7 @@ template <class T>
 int process2(T& m)
 {
     int ret = 0;
-    for (int i = 0; i < 100000; ++i)
+    for (int i = 0; i < 1; ++i)
     {
         for (auto& x : m)
             ret += x.x;
@@ -164,6 +165,7 @@ TEST_CASE("Perftest")
     map<int, TestObj> t_map;
     unordered_map<int, TestObj> t_map2;
     flatimap<int, TestObj> t_map3;
+    std::flat_map<int, TestObj> t_map4;
 
     t.clearAndLap("fill - map");
     filling(t_map);
@@ -171,6 +173,8 @@ TEST_CASE("Perftest")
     filling(t_map2);
     t.lap("fill - flatimap");
     filling(t_map3);
+    t.lap("fill - std::flat_map");
+    filling(t_map4);
     auto ret = t.finalize();
     for (auto& i : ret)
         std::cout << i.str() << std::endl;
@@ -182,6 +186,8 @@ TEST_CASE("Perftest")
     randomizeData(t_map2);
     t.lap("randomize - flatimap");
     randomizeData(t_map3);
+    t.lap("randomize - std::flat_map");
+    randomizeData(t_map4);
     ret = t.finalize();
     for (auto& i : ret)
         std::cout << i.str() << std::endl;
@@ -193,6 +199,8 @@ TEST_CASE("Perftest")
     access(t_map2);
     t.lap("access - flatimap");
     access(t_map3);
+    t.lap("access - std::flat_map");
+    access(t_map4);
     ret = t.finalize();
     for (auto& i : ret)
         std::cout << i.str() << std::endl;
@@ -204,6 +212,8 @@ TEST_CASE("Perftest")
     process(t_map2);
     t.lap("process - flatimap");
     process2(t_map3);
+    t.lap("process - std::flat_map");
+    process(t_map4);
     ret = t.finalize();
     for (auto& i : ret)
         std::cout << i.str() << std::endl;

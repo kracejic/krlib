@@ -120,7 +120,13 @@ class optional
             throw std::range_error("bad optional");
         return storage.val;
     }
-    constexpr T& value_or(T&& other)
+    constexpr T& value_or(T& other)
+    {
+        if (not initialized)
+            return other;
+        return storage.val;
+    }
+    constexpr const T& value_or(const T& other) const
     {
         if (not initialized)
             return other;

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cctype>
+#include <cstdint>
 #include <cstring>
 #include <stdexcept>
-#include <cstdint>
 #include <string>
 #if __cplusplus > 201402L
 #include <string_view>
@@ -35,11 +35,11 @@ namespace Json
           public:
             TreeNode(Type _type, const char* start)
                 : type(_type)
-                , text_start(start) {};
+                , text_start(start) { };
             TreeNode(Type _type, const char* start, const char* end)
                 : type(_type)
                 , text_start(start)
-                , text_end(end) {};
+                , text_end(end) { };
             Type type {Type::null};
             uint32_t size {1};
             // indexes ins
@@ -52,11 +52,19 @@ namespace Json
     {
       protected:
         _detail::TreeNode* me {nullptr};
+        std::string path {""};
+
+        Value emptyWithPath(std::string txt) const
+        {
+            Value ret {};
+            ret.path = std::move(txt);
+            return ret;
+        }
 
       public:
-        Value() {};
+        Value() { };
         Value(_detail::TreeNode* _it)
-            : me(_it) {};
+            : me(_it) { };
         Value& operator++()
         {
             me = me + me->size;
@@ -122,7 +130,8 @@ namespace Json
             for (auto& keyval : *this)
                 if (keyval.key() == key)
                     return keyval.value();
-            return {};
+            auto ret = emptyWithPath(std::string(".") + key);
+            return ret;
         }
 
         /// Object accessor.
@@ -131,7 +140,8 @@ namespace Json
             for (auto& keyval : *this)
                 if (keyval.key() == key)
                     return keyval.value();
-            return {};
+            auto ret = emptyWithPath(std::string(".") + key);
+            return ret;
         }
 
         /// Array accessor.
@@ -141,6 +151,7 @@ namespace Json
             Value end = this->end();
             for (int i = 0; i < index && ret != end; ++i)
                 ++ret;
+            ret.path += "." + std::to_string(index);
             return ret;
         }
 
@@ -249,7 +260,8 @@ namespace Json
         void throwIfInvalid() const
         {
             if (me == nullptr)
-                throw std::runtime_error {"Element is not in here."};
+                throw std::runtime_error {
+                    "Element " + path + "is not in here."};
         }
 
         // clang-format off
@@ -436,7 +448,7 @@ namespace Json
         }
 
       public:
-        Reader() {};
+        Reader() { };
 
         Reader(const std::string& input)
             : text(input.c_str())

@@ -49,7 +49,7 @@ class indexvector
   private:
     using Storage_t = _indexvec_detail::storage_t<K, V>;
 
-    Storage_t* data {nullptr};
+    Storage_t* m_data {nullptr};
     K* index {nullptr};
 
     K allocated {0};
@@ -81,9 +81,9 @@ class indexvector
     {
         reserve(rhs.allocated);
 
-        // copy the data
+        // copy the m_data
         for (K i = 0; i < rhs.used; ++i)
-            new (&data[i].val) V((rhs.data[i].val));
+            new (&m_data[i].val) V((rhs.m_data[i].val));
 
         // Copy the indexes
         std::copy(rhs.index, rhs.index + 2 * rhs.allocated, index);
@@ -97,9 +97,9 @@ class indexvector
         used = rhs.used;
         freeIndexes = rhs.freeIndexes;
         index = rhs.index;
-        data = rhs.data;
+        m_data = rhs.m_data;
 
-        rhs.data = nullptr;
+        rhs.m_data = nullptr;
         rhs.index = nullptr;
         rhs.allocated = 0;
         rhs.used = 0;
@@ -114,13 +114,13 @@ class indexvector
         freeIndexes = 0;
         allocated = 0;
         delete[] index;
-        delete[] data;
+        delete[] m_data;
         index = nullptr;
         reserve(rhs.allocated);
 
-        // copy the data/indexes
+        // copy the m_data/indexes
         for (K i = 0; i < rhs.used; ++i)
-            new (&data[i].val) V((rhs.data[i].val));
+            new (&m_data[i].val) V((rhs.m_data[i].val));
         std::copy(rhs.index, rhs.index + 2 * rhs.allocated, index);
 
         // copy other values
@@ -137,17 +137,17 @@ class indexvector
         freeIndexes = 0;
         allocated = 0;
         delete[] index;
-        delete[] data;
+        delete[] m_data;
 
         // steal
         allocated = rhs.allocated;
         used = rhs.used;
         freeIndexes = rhs.freeIndexes;
         index = rhs.index;
-        data = rhs.data;
+        m_data = rhs.m_data;
 
         // clean rhs
-        rhs.data = nullptr;
+        rhs.m_data = nullptr;
         rhs.index = nullptr;
         rhs.allocated = 0;
         rhs.used = 0;
@@ -159,7 +159,7 @@ class indexvector
     {
         for (auto& i : *this)
             i.~V();
-        delete[] data;
+        delete[] m_data;
         delete[] index;
     }
 
@@ -190,13 +190,13 @@ class indexvector
         {
             // Allocate new space
             auto oldindex = index;
-            auto olddata = data;
+            auto olddata = m_data;
             index = new K[newsize * 2];
-            data = new Storage_t[newsize];
+            m_data = new Storage_t[newsize];
 
-            // move the data
+            // move the m_data
             for (K i = 0; i < used; ++i)
-                new (&data[i].val) V(std::move(olddata[i].val));
+                new (&m_data[i].val) V(std::move(olddata[i].val));
 
             // Clean indexes
             for (auto it = (index + allocated);
@@ -221,7 +221,7 @@ class indexvector
             if (newsize <= 0)
                 newsize = 32;
             index = new K[newsize * 2];
-            data = new Storage_t[newsize];
+            m_data = new Storage_t[newsize];
             for (auto it = index; it != (index + newsize * 2); ++it)
                 *it = -1;
             allocated = newsize;
@@ -236,42 +236,47 @@ class indexvector
     V& push_back(V&& val)
     {
         auto freeid = getFreeKey();
-        new (&data[used].val) V(std::move(val));
-        data[used].id() = freeid;
+        new (&m_data[used].val) V(std::move(val));
+        m_data[used].id() = freeid;
         index[freeid] = used;
         used++;
-        return data[used - 1].val;
+        return m_data[used - 1].val;
     }
 
     V& push_back(const V& val)
     {
         auto freeid = getFreeKey();
-        new (&data[used].val) V(val);
-        data[used].id() = freeid;
+        new (&m_data[used].val) V(val);
+        m_data[used].id() = freeid;
         index[freeid] = used;
         used++;
-        return data[used - 1].val;
+        return m_data[used - 1].val;
     }
 
     template <class... Args>
     V& emplace_back(Args&&... args)
     {
         auto freeid = getFreeKey();
-        new (&data[used].val) V((args)...);
-        data[used].id() = freeid;
+        new (&m_data[used].val) V((args)...);
+        m_data[used].id() = freeid;
         index[freeid] = used;
         used++;
-        return data[used - 1].val;
+        return m_data[used - 1].val;
+    }
+
+    V& data(size_t key)
+    {
+        return m_data[key].val;
     }
 
     V& operator[](K key)
     {
-        return data[index[key]].val;
+        return m_data[index[key]].val;
     }
 
     const V& operator[](K key) const
     {
-        return data[index[key]].val;
+        return m_data[index[key]].val;
     }
 
 
@@ -280,7 +285,7 @@ class indexvector
     {
         if (key < 0 || key >= allocated || index[key] == -1)
             throw std::out_of_range {"out of range in inlineVec"};
-        return data[index[key]].val;
+        return m_data[index[key]].val;
     }
 
     /// Throws exception when object does not exists
@@ -288,7 +293,7 @@ class indexvector
     {
         if (key < 0 || key >= allocated || index[key] == -1)
             throw std::out_of_range {"out of range in inlineVec"};
-        return data[index[key]].val;
+        return m_data[index[key]].val;
     }
 
     /// Throws exception when object does not exists
@@ -311,10 +316,10 @@ class indexvector
         if (used != pos)
         {
             // Swap if not at the end of the vector
-            index[data[used].id()] = pos;
-            data[pos].val = std::move(data[used].val);
+            index[m_data[used].id()] = pos;
+            m_data[pos].val = std::move(m_data[used].val);
         }
-        data[used].val.~V();
+        m_data[used].val.~V();
     }
     void erase(V* iter)
     {
@@ -332,10 +337,10 @@ class indexvector
         if (used != pos)
         {
             // Swap if not at the end of the vector
-            index[data[used].id()] = pos;
-            data[pos].val = std::move(data[used].val);
+            index[m_data[used].id()] = pos;
+            m_data[pos].val = std::move(m_data[used].val);
         }
-        data[used].val.~V();
+        m_data[used].val.~V();
     }
     void erase(V* iter, V* iter2)
     {
@@ -345,19 +350,19 @@ class indexvector
 
     V* begin()
     {
-        return &data[0].val;
+        return &m_data[0].val;
     }
     V* end()
     {
-        return &data[used].val;
+        return &m_data[used].val;
     }
     const V* begin() const
     {
-        return &data[0].val;
+        return &m_data[0].val;
     }
     const V* end() const
     {
-        return &data[used].val;
+        return &m_data[used].val;
     }
 
   private:

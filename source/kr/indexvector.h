@@ -15,7 +15,7 @@ namespace _indexvec_detail
         T val;
 
         constexpr storage_t() noexcept
-            : dummy_() {};
+            : dummy_() { };
 
         constexpr storage_t(T& other, K newid)
             : val(other)
@@ -24,7 +24,7 @@ namespace _indexvec_detail
         };
 
         constexpr storage_t(T&& other)
-            : val(other) {};
+            : val(other) { };
 
         template <class... Args>
         constexpr storage_t(Args&&... args)
@@ -37,7 +37,7 @@ namespace _indexvec_detail
             return val.id;
         }
 
-        ~storage_t() {};
+        ~storage_t() { };
     };
 
 } /* _indexvec_detail */
@@ -200,7 +200,7 @@ class indexvector
 
             // Clean indexes
             for (auto it = (index + allocated);
-                 it != (index + newsize * 2 - freeIndexes); ++it)
+                it != (index + newsize * 2 - freeIndexes); ++it)
             {
                 *it = -1;
             }
@@ -344,25 +344,25 @@ class indexvector
     }
     void erase(V* iter, V* iter2)
     {
-        for (V* i = iter2-1; i >= iter; i--)
+        for (V* i = iter2 - 1; i >= iter; i--)
             erase(i);
     }
 
     V* begin()
     {
-        return &m_data[0].val;
+        return (V*)(m_data);
     }
     V* end()
     {
-        return &m_data[used].val;
+        return (V*)(m_data + used);
     }
     const V* begin() const
     {
-        return &m_data[0].val;
+        return (V*)(m_data);
     }
     const V* end() const
     {
-        return &m_data[used].val;
+        return (V*)(m_data + used);
     }
 
   private:

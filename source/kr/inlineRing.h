@@ -138,8 +138,8 @@ class inlineRing
 
     void pop_front()
     {
-        mFront++;
         data[addr(mFront)].val.~T();
+        mFront++;
     }
     void pop_back()
     {

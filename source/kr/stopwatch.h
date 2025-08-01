@@ -43,6 +43,17 @@ class Stopwatch
         return mDuration.count();
     };
 
+    /// Just return how many ms from start, do not lap
+    double peek_ms()
+    {
+        auto end = std::chrono::high_resolution_clock::now();
+        auto dur = std::chrono::duration_cast<
+            std::chrono::duration<double, std::ratio<1, 1000>>>(end - mStart);
+        return std::chrono::duration_cast<
+            std::chrono::duration<double, std::ratio<1, 1000>>>(dur)
+            .count();
+    };
+
     /// String value of last duration "10ms".
     std::string str() const
     {

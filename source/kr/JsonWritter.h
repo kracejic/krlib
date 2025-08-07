@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #if __cplusplus > 201402L
 #include <string_view>
